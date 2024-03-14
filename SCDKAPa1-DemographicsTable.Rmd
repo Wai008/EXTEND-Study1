@@ -1,0 +1,291 @@
+---
+title: "SCDKAPAim1_EXTEND"
+author: "Kirstin"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+Install and Load Packages
+```{r}
+# install.packages("reshape2")
+# install.packages("dunn.test")
+
+library(readr)
+library(dplyr)
+library(haven)
+library(table1)
+library(car)
+library(ggplot2)
+library(knitr)
+library(broom)
+library(lubridate)
+library(reshape2)
+library(tidyr)
+library(dunn.test)
+```
+
+Import data set
+```{r}
+SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
+
+# SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/SCDKAPAim1.csv") # older data set version
+# View(SCDKAPa1)
+```
+
+
+########################## Table 1. Clinician Demographics ##########################
+
+Ensure appropriate variable character (as factor OR as numeric) - Table 1: Clinician Demographics
+```{r}
+# Clinician Demographics
+## --> as.numeric
+SCDKAPa1$experience_ng<-as.numeric(SCDKAPa1$experience_ng)
+
+## --> as.factor
+SCDKAPa1$age_ng<-as.factor(SCDKAPa1$age_ng)
+SCDKAPa1$gender_ng<-as.factor(SCDKAPa1$gender_ng)
+SCDKAPa1$profession_ng_up<-as.factor(SCDKAPa1$profession_ng_up)
+SCDKAPa1$patient_pop_ng<-as.factor(SCDKAPa1$patient_pop_ng)
+SCDKAPa1$practice_location_ng___1<-as.factor(SCDKAPa1$practice_location_ng___1)
+SCDKAPa1$practice_location_ng___2<-as.factor(SCDKAPa1$practice_location_ng___2)
+SCDKAPa1$practice_location_ng___3<-as.factor(SCDKAPa1$practice_location_ng___3)
+SCDKAPa1$practice_location_ng___4<-as.factor(SCDKAPa1$practice_location_ng___4)
+SCDKAPa1$practice_location_ng___5<-as.factor(SCDKAPa1$practice_location_ng___5)
+SCDKAPa1$year_in_practice<-as.factor(SCDKAPa1$year_in_practice)
+SCDKAPa1$region_ng<-as.factor(SCDKAPa1$region_ng)
+SCDKAPa1$tx_avail_ng___1<-as.factor(SCDKAPa1$tx_avail_ng___1)
+SCDKAPa1$tx_avail_ng___2<-as.factor(SCDKAPa1$tx_avail_ng___2)
+SCDKAPa1$tx_avail_ng___3<-as.factor(SCDKAPa1$tx_avail_ng___3)
+SCDKAPa1$tx_avail_ng___4<-as.factor(SCDKAPa1$tx_avail_ng___4)
+SCDKAPa1$tx_avail_ng___5<-as.factor(SCDKAPa1$tx_avail_ng___5)
+SCDKAPa1$numscdpt_ng<-as.factor(SCDKAPa1$numscdpt_ng)
+```
+
+Relabel Variables for table
+```{r}
+SCDKAPa1$age_ng <- 
+  factor(SCDKAPa1$age_ng, levels=c("2","3", "4"),
+         labels=c("18-35 years old",
+                  "35-65 years old",
+                  "5 years old and over"))
+
+SCDKAPa1$gender_ng <- 
+  factor(SCDKAPa1$gender_ng, levels=c("1","2"),
+         labels=c("Male", 
+                  "Female"))
+
+SCDKAPa1$profession_ng_up <- 
+  factor(SCDKAPa1$profession_ng_up, levels=c("1","2","3"),
+         labels=c("Physician",
+                  "Nurse",
+                  "Other"))
+
+SCDKAPa1$patient_pop_ng <- 
+  factor(SCDKAPa1$patient_pop_ng, levels=c("1","2", "3"),
+         labels=c("Mainly adults", 
+                  "Mainly children",
+                  "Both"))
+
+SCDKAPa1$practice_location_ng___1 <- 
+  factor(SCDKAPa1$practice_location_ng___1, levels=c("0","1"),
+         labels=c("No - Primary Health Care", 
+                  "Yes - Primary Health Care"))
+
+SCDKAPa1$practice_location_ng___2 <- 
+  factor(SCDKAPa1$practice_location_ng___2, levels=c("0","1"),
+         labels=c("No - Secondary Health Care", 
+                  "Yes - Secondary Health Care"))
+
+SCDKAPa1$practice_location_ng___3 <- 
+  factor(SCDKAPa1$practice_location_ng___3, levels=c("0","1"),
+         labels=c("No - Tertiary Health Care", 
+                  "Yes - Tertiary Health Care"))
+
+SCDKAPa1$practice_location_ng___4 <- 
+  factor(SCDKAPa1$practice_location_ng___4, levels=c("0","1"),
+         labels=c("No - Private Health Care", 
+                  "Yes - Private Health Care"))
+
+SCDKAPa1$practice_location_ng___5 <- 
+  factor(SCDKAPa1$practice_location_ng___5, levels=c("0","1"),
+         labels=c("No - Other", 
+                  "Yes - Other"))
+
+SCDKAPa1$year_in_practice <- 
+  factor(SCDKAPa1$year_in_practice, levels=c("1","2", "3", "4", "5"),
+         labels=c("0 - 5", 
+                  "6 - 10",
+                  "11 - 15",
+                  "16 - 20",
+                  "21 +"))
+
+SCDKAPa1$tx_avail_ng___1 <- 
+  factor(SCDKAPa1$tx_avail_ng___1, levels=c("0","1"),
+         labels=c("No - Comprehensive sickle cell center", 
+                  "Yes - Comprehensive sickle cell center"))
+
+SCDKAPa1$tx_avail_ng___2 <- 
+  factor(SCDKAPa1$tx_avail_ng___2, levels=c("0","1"),
+         labels=c("No - Sickle cell disease expert", 
+                  "Yes - Sickle cell disease expert"))
+
+SCDKAPa1$tx_avail_ng___3 <- 
+  factor(SCDKAPa1$tx_avail_ng___3, levels=c("0","1"),
+         labels=c("No - General hematologists", 
+                  "Yes - General hematologists"))
+
+SCDKAPa1$tx_avail_ng___4 <- 
+  factor(SCDKAPa1$tx_avail_ng___4, levels=c("0","1"),
+         labels=c("No - Other follow-up services", 
+                  "Yes - Other follow-up services"))
+
+SCDKAPa1$tx_avail_ng___5 <- 
+  factor(SCDKAPa1$tx_avail_ng___5, levels=c("0","1"),
+         labels=c("No - No follow-up services", 
+                  "Yes - No follow-up services"))
+
+SCDKAPa1$numscdpt_ng <- 
+  factor(SCDKAPa1$numscdpt_ng, levels=c("1", "2", "3", "4", "5"),
+         labels=c("0 - 5", 
+                  "6 - 10",
+                  "10 -15",
+                  "16 - 20",
+                  "20 or more"))
+```
+
+
+Generate Demographic Table
+```{r}
+# total population demographics
+table1(~ age_ng + gender_ng + region_ng + profession_ng_up + patient_pop_ng + experience_ng + practice_location_ng___1 + practice_location_ng___2 + practice_location_ng___3 + practice_location_ng___4 + practice_location_ng___5 + year_in_practice + tx_avail_ng___1 + tx_avail_ng___2 + tx_avail_ng___3 + tx_avail_ng___4 + tx_avail_ng___5 + numscdpt_ng , data = SCDKAPa1, droplevels = TRUE, overall = "Total")
+
+# stratified by profession type
+table1(~ age_ng + gender_ng + region_ng + patient_pop_ng + experience_ng + practice_location_ng___1 + practice_location_ng___2 + practice_location_ng___3 + practice_location_ng___4 + practice_location_ng___5 + year_in_practice + tx_avail_ng___1 + tx_avail_ng___2 + tx_avail_ng___3 + tx_avail_ng___4 + tx_avail_ng___5 + numscdpt_ng|profession_ng_up, data = SCDKAPa1, droplevels = TRUE, overall = "Total")
+
+# Calculate median and IQR for numeric variables - age and years in practice
+median_experience <- SCDKAPa1 %>%
+  summarize(
+    median_correct = median(experience_ng, na.rm = TRUE),
+    q1 = quantile(experience_ng, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(experience_ng, probs = 0.75, na.rm = TRUE)
+  )
+
+median_experience
+
+median_experience <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    median_correct = median(experience_ng, na.rm = TRUE),
+    q1 = quantile(experience_ng, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(experience_ng, probs = 0.75, na.rm = TRUE)
+  )
+
+median_experience
+```
+
+Generate P-Values for Table 1. Clinician Demographics - Categorical Variables
+```{r}
+# Age
+age_ng_cattbl = table(SCDKAPa1$age_ng, SCDKAPa1$profession_ng_up)
+fisher.test(age_ng_cattbl)
+
+# Gender
+gender_ng_cattbl = table(SCDKAPa1$gender_ng, SCDKAPa1$profession_ng_up)
+fisher.test(gender_ng_cattbl)
+
+# Region
+region_ng_cattbl = table(SCDKAPa1$region_ng, SCDKAPa1$profession_ng_up)
+fisher.test(region_ng_cattbl)
+
+# Patient Population
+patient_pop_ng_cattbl = table(SCDKAPa1$patient_pop_ng, SCDKAPa1$profession_ng_up)
+fisher.test(patient_pop_ng_cattbl)
+
+# Practice Location - Primary Health Care
+practice_location_ng___1_cattbl = table(SCDKAPa1$practice_location_ng___1, SCDKAPa1$profession_ng_up)
+fisher.test(practice_location_ng___1_cattbl)
+
+# Practice Location - Secondary Health Care
+practice_location_ng___2_cattbl = table(SCDKAPa1$practice_location_ng___2, SCDKAPa1$profession_ng_up)
+fisher.test(practice_location_ng___2_cattbl)
+
+# Practice Location - Tertiary Health Care
+practice_location_ng___3_cattbl = table(SCDKAPa1$practice_location_ng___3, SCDKAPa1$profession_ng_up)
+fisher.test(practice_location_ng___3_cattbl)
+
+# Practice Location - Private Health Care
+practice_location_ng___4_cattbl = table(SCDKAPa1$practice_location_ng___4, SCDKAPa1$profession_ng_up)
+fisher.test(practice_location_ng___4_cattbl)
+
+# Practice Location - Other
+practice_location_ng___5_cattbl = table(SCDKAPa1$practice_location_ng___5, SCDKAPa1$profession_ng_up)
+fisher.test(practice_location_ng___5_cattbl)
+
+# Years in Practice - categorical
+year_in_practice_cattbl = table(SCDKAPa1$year_in_practice, SCDKAPa1$profession_ng_up)
+fisher.test(year_in_practice_cattbl)
+
+# Years in Practice - numerical
+kruskal.test(experience_ng ~ profession_ng_up, data = SCDKAPa1)
+
+# Available resources
+tx_avail_ng___1_cattbl = table(SCDKAPa1$tx_avail_ng___1, SCDKAPa1$profession_ng_up)
+fisher.test(tx_avail_ng___1_cattbl)
+
+tx_avail_ng___2_cattbl = table(SCDKAPa1$tx_avail_ng___2, SCDKAPa1$profession_ng_up)
+fisher.test(tx_avail_ng___2_cattbl)
+
+tx_avail_ng___3_cattbl = table(SCDKAPa1$tx_avail_ng___3, SCDKAPa1$profession_ng_up)
+fisher.test(tx_avail_ng___3_cattbl)
+
+tx_avail_ng___4_cattbl = table(SCDKAPa1$tx_avail_ng___4, SCDKAPa1$profession_ng_up)
+fisher.test(tx_avail_ng___4_cattbl)
+
+tx_avail_ng___5_cattbl = table(SCDKAPa1$tx_avail_ng___5, SCDKAPa1$profession_ng_up)
+fisher.test(tx_avail_ng___5_cattbl)
+
+# Number of patients cared for per week
+numscdpt_ng_cattbl = table(SCDKAPa1$numscdpt_ng, SCDKAPa1$profession_ng_up)
+fisher.test(numscdpt_ng_cattbl, simulate.p.value = TRUE)
+```
+
+########################## De-Identify Clinicians ##########################
+```{r}
+# Make variables correct format
+SCDKAPa1$region_ng<-as.factor(SCDKAPa1$region_ng)
+SCDKAPa1$profession_ng<-as.factor(SCDKAPa1$profession_ng)
+SCDKAPa1$practice_loc_ng<-as.factor(SCDKAPa1$practice_loc_ng)
+
+SCDKAPa1$region_ng <- 
+  factor(SCDKAPa1$region_ng, levels=c("1", "2", "3", "4", "5", "6"),
+         labels=c("Northwest",
+                  "Northeast",
+                  "Northcentral",
+                  "Southwest",
+                  "Southeast",
+                  "Southsouth"))
+
+SCDKAPa1$profession_ng <- 
+  factor(SCDKAPa1$profession_ng, levels=c("1","2","3", "4", "5", "7", "8", "9"),
+         labels=c("Adult Hematologist",
+                  "Pediatric Hematologist",
+                  "Primary Care Physician",
+                  "Community health officer",
+                  "Community health worker",
+                  "Resident Physician",
+                  "Nurse",
+                  "Other"))
+
+# Create the bar chart using ggplot2
+ggplot(SCDKAPa1, aes(x = region_ng, fill = profession_ng)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Bar Chart of Profession Count by Region",
+       x = "Region",
+       y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+```
+

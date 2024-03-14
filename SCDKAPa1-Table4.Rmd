@@ -1,0 +1,542 @@
+---
+title: "SCDKAPa1-Table4"
+author: "Kirstin"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  html_document: default
+---
+
+Install and Load Packages
+```{r}
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(table1)
+```
+
+## Table 4a and 4b - Kirstin ##
+1. Import and load data set
+```{r}
+SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
+# SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/SCDKAPAim1.csv") # older dataset version
+```
+
+2. Ensure appropriate variable character (as factor OR as numeric) - Table 4a and 4b
+```{r}
+# as.factor
+## -> Health Maintenance
+SCDKAPa1$freqabx_ng<-as.factor(SCDKAPa1$freqabx_ng)
+SCDKAPa1$freqstopabx_ng<-as.factor(SCDKAPa1$freqstopabx_ng)
+SCDKAPa1$freqedpneuvax_ng<-as.factor(SCDKAPa1$freqedpneuvax_ng)
+SCDKAPa1$freqedfever_ng<-as.factor(SCDKAPa1$freqedfever_ng)
+SCDKAPa1$freqcbcretic_ng<-as.factor(SCDKAPa1$freqcbcretic_ng)
+SCDKAPa1$freqipp_ng<-as.factor(SCDKAPa1$freqipp_ng)
+
+## -> Hydroxyurea
+SCDKAPa1$hurx_up<-as.factor(SCDKAPa1$hurx_up)
+SCDKAPa1$hucollab_ng<-as.factor(SCDKAPa1$hucollab_ng)
+SCDKAPa1$consultscd_ng<-as.factor(SCDKAPa1$consultscd_ng)
+SCDKAPa1$counselmiss_ng<-as.factor(SCDKAPa1$counselmiss_ng)
+SCDKAPa1$educatescd_ng<-as.factor(SCDKAPa1$educatescd_ng)
+SCDKAPa1$hutherapyadult_ng<-as.factor(SCDKAPa1$hutherapyadult_ng)
+SCDKAPa1$hutherapypeds_ng<-as.factor(SCDKAPa1$hutherapypeds_ng)
+SCDKAPa1$disconpreg_ng<-as.factor(SCDKAPa1$disconpreg_ng)
+SCDKAPa1$cbcwithdiff_ng<-as.factor(SCDKAPa1$cbcwithdiff_ng)
+SCDKAPa1$monitorcbc_ng<-as.factor(SCDKAPa1$monitorcbc_ng)
+```
+
+3. Relabel variables for table
+```{r}
+# Health Maintenance
+SCDKAPa1$freqabx_ng <- 
+  factor(SCDKAPa1$freqabx_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$freqstopabx_ng <- 
+  factor(SCDKAPa1$freqstopabx_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$freqedpneuvax_ng <- 
+  factor(SCDKAPa1$freqedpneuvax_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$freqedfever_ng <- 
+  factor(SCDKAPa1$freqedfever_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$freqcbcretic_ng <- 
+  factor(SCDKAPa1$freqcbcretic_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$freqipp_ng <- 
+  factor(SCDKAPa1$freqipp_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+# Hydroxyurea
+SCDKAPa1$hurx_up <- 
+  factor(SCDKAPa1$hurx_up, levels=c("1", "0"),
+         labels=c("Completely adhere / yes",
+                  "Never adhere / no"))
+
+SCDKAPa1$hucollab_ng <- 
+  factor(SCDKAPa1$hucollab_ng, levels=c("1", "0"),
+         labels=c("Completely adhere / yes",
+                  "Never adhere / no"))
+
+SCDKAPa1$consultscd_ng <- 
+  factor(SCDKAPa1$consultscd_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$counselmiss_ng <- 
+  factor(SCDKAPa1$counselmiss_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$educatescd_ng <- 
+  factor(SCDKAPa1$educatescd_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$hutherapyadult_ng <- 
+  factor(SCDKAPa1$hutherapyadult_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$hutherapypeds_ng <- 
+  factor(SCDKAPa1$hutherapypeds_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$disconpreg_ng <- 
+  factor(SCDKAPa1$disconpreg_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$cbcwithdiff_ng <- 
+  factor(SCDKAPa1$cbcwithdiff_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+
+SCDKAPa1$monitorcbc_ng <- 
+  factor(SCDKAPa1$monitorcbc_ng, levels=c("4","3", "2", "1", "5"),
+         labels=c("Completely adhere / always",
+                  "Freqeuntly adhere",
+                  "Rarely adhere",
+                  "Never adhere",
+                  "NA"))
+```
+
+4. Generate Table 4a and 4b (Kirstin)
+```{r}
+# Table 4a: Health Maintenance
+table1(~ freqabx_ng + freqstopabx_ng + freqedpneuvax_ng + freqedfever_ng + freqcbcretic_ng + freqipp_ng, data = SCDKAPa1, droplevels = TRUE, overall = "Total")
+
+# Table 4b
+table1(~ hurx_up + hucollab_ng + consultscd_ng + counselmiss_ng + educatescd_ng + hutherapyadult_ng + hutherapypeds_ng + disconpreg_ng + cbcwithdiff_ng + monitorcbc_ng, data = SCDKAPa1, droplevels = TRUE, overall = "Total")
+```
+
+## Table 4c. Healthcare Provider Adherence to Guideline Based Blood Transfusion Recommendations - Wai
+
+```{r}
+SCDKAPa1 %>% 
+  select(record_id, ordertransfus_ng:chelatthera_ng)
+```
+
+
+### ordertransfus_ng - Do you utilize/order blood transfusion (simple and/or exchange) for individuals with SCD?
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(ordertransfus_ng) %>% 
+  count()
+```
+
+### collabtransfus_ng - Do you work with a hematologist/SCD expert who utilizes/orders blood transfusions for individuals with SCD?	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(collabtransfus_ng) %>% 
+  count()
+```
+
+### xchangetransfus - Do you have access to the equipment and personnel necessary to provide exchange transfusions?	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(xchangetransfus) %>% 
+  count()
+```
+
+
+### transfus10_ng - Order preoperative simple blood transfusion with goal hemoglobin of 10 g/dL /or patient specific hemoglobin goal	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(transfus10_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+
+### reduchbs_ng - Provide prophylactic blood transfusions for maximum reduction of hemoglobin S (< 30%) in individuals with HbSS	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(reduchbs_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### simpletransfus_ng - Order simple transfusion for uncomplicated vaso-occlusive episode	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(simpletransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### theratransfus_ng - Provide therapeutic blood transfusions for acute sickle cell disease complications	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(theratransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### delaytransfus_ng - Delay transfusion while seeking cause of acute, severe anemia	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(delaytransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### ipptransfus_ng - Create an individualized patient plan for the use of simple and/or exchange transfusion as part of disease management	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(ipptransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### rbcantigen_ng - Match for minor red blood cell antigens 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(rbcantigen_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### leukreduc_ng - Use pre-storage leukoreduction or bedside white blood cell filtration
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(leukreduc_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### chelatthera_ng - Order chelation therapy
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(chelatthera_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+
+
+## Table 4b.  Healthcare Provider Adherence to …
+
+```{r}
+SCDKAPa1 %>% 
+  select(record_id, proteinuria_ng:specialist_ng)
+```
+
+
+### proteinuria_ng - Screen for proteinuria by at least age 10
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(proteinuria_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### htn_ng - Screen for hypertension in adults (SBP≥130, DBP≥80)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(htn_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### bpchild_ng - Monitor BP in children
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(bpchild_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### extremities_ng - Examine extremities and initiate treatment for active or healed ulcers
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(extremities_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### transcdop_ng - Conduct annual transcranial doppler from ages 2 to 16 years according to STOP study methods (specific to HbSS, HbSβ0 thalassemia) 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(transcdop_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### assessresp_ng - Assess for signs and symptoms of respiratory problems like asthma, COPD, restrictive lung disease or refer to an appropriate specialist
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(assessresp_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### reproriskasses_ng - Conduct reproductive risk assessment, educational and health promotion counseling or refer to specialist for women and men of childbearing age or refer to an appropriate specialist 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(reproriskasses_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### adultscdscreen_ng - Refer male and female partners for sickle cell screening 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(adultscdscreen_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### assessavn_ng - Screen all individuals with SCD and intermittent or chronic hip pain for avascular necrosis (history, physical exam, imaging) 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(assessavn_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### pregtransfuse_ng - Screen women who have been transfused and are pregnant for red cell alloantibodies 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(pregtransfuse_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### assesssleepbreath_ng - Assess for signs and symptoms of sleep-disordered breathing like sleep apnea or refer to an appropriate specialist 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(assesssleepbreath_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```
+
+### specialist_ng - Refer to appropriate specialist for specific disease complication or co-morbidity treatment
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(specialist_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percent = n/total*100,
+    percent = sprintf("%.1f", percent)
+  )
+```

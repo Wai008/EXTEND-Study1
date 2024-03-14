@@ -1,0 +1,831 @@
+---
+title: "Knowledge Code - SCDKAP Aim 1"
+author: "Kirstin"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+Install and Load Packages
+```{r}
+library(readr)
+library(dplyr)
+```
+
+1. Import and load data set
+```{r}
+SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
+# SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/SCDKAPAim1.csv") # older dataset version
+# View(SCDKAPa1)
+```
+
+2. Create variable(s) for number of questions correct
+Create variable for the total number of questions correct (out of 18). For each answer the participant answers correctly, the value of one is added to the "totalcorrect" variable.
+```{r}
+# Create a new variable "totalcorrect" and initialize it with zeros
+SCDKAPa1$totalcorrect <- 0
+
+# Increment "totalcorrect" based on conditions
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$patho_ng == "c", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$complscdpeds_ng == "a", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$acutechestpres_ng == "d", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$investcause_ng == "d", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$manifescdpeds_ng == "a", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$hemorstroke_ng == "2", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$ironover_ng == "2", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$acutechronpain_ng == "1", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$goldstand_ng == "a", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$contransaids_ng == "d", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$indicmetha_ng == "d", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$insomantx_ng == "b", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$hemo_ng == "2", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$longshortpain_ng == "1", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$edvisit_ng == "d", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$socialinfluence_ng == "d", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$psychosocial_ng == "a", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$addictionadapt_ng == "2", 1, 0)
+
+# Convert the total number correct for all participants to the total percent correct
+SCDKAPa1$total_percentcorrect <- (SCDKAPa1$totalcorrect / 18) * 100
+
+# View(SCDKAPa1)
+```
+
+Create variable for the complication questions correct (out of 8). For each answer the participant answers correctly, the value of one is added to the "compcorrect" variable.
+```{r}
+# Create a new variable "compcorrect" and initialize it with zeros
+SCDKAPa1$compcorrect <- 0
+
+# Increment "compcorrect" based on conditions
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$patho_ng == "c", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$complscdpeds_ng == "a", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$acutechestpres_ng == "d", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$investcause_ng == "d", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$manifescdpeds_ng == "a", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$hemorstroke_ng == "2", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$ironover_ng == "2", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$acutechronpain_ng == "1", 1, 0)
+
+# Convert the number of compcorrect for all participants to the total percent of compcorrect
+SCDKAPa1$comp_percentcorrect <- (SCDKAPa1$compcorrect / 8) * 100
+
+# View(SCDKAPa1)
+```
+
+Create variable for management questions correct (out of 6). For each answer the participant answers correctly, the value of one is added to the "managecorrect" variable.
+```{r}
+# Create a new variable "compcorrect" and initialize it with zeros
+SCDKAPa1$managecorrect <- 0
+
+SCDKAPa1$managecorrect <- SCDKAPa1$managecorrect + ifelse(SCDKAPa1$goldstand_ng == "a", 1, 0)
+SCDKAPa1$managecorrect <- SCDKAPa1$managecorrect + ifelse(SCDKAPa1$contransaids_ng == "d", 1, 0)
+SCDKAPa1$managecorrect <- SCDKAPa1$managecorrect + ifelse(SCDKAPa1$indicmetha_ng == "d", 1, 0)
+SCDKAPa1$managecorrect <- SCDKAPa1$managecorrect + ifelse(SCDKAPa1$insomantx_ng == "b", 1, 0)
+SCDKAPa1$managecorrect <- SCDKAPa1$managecorrect + ifelse(SCDKAPa1$hemo_ng == "2", 1, 0)
+SCDKAPa1$managecorrect <- SCDKAPa1$managecorrect + ifelse(SCDKAPa1$longshortpain_ng == "1", 1, 0)
+
+# Convert the number of managecorrect for all participants to the total percent of managecorrect
+SCDKAPa1$manage_percentcorrect <- (SCDKAPa1$managecorrect / 6) * 100
+
+# View(SCDKAPa1)
+```
+
+Create variable for bps questions correct (out of 4). For each answer the participant answers correctly, the value of one is added to the "bpscorrect" variable.
+```{r}
+# Create a new variable "bpscorrect" and initialize it with zeros
+SCDKAPa1$bpscorrect <- 0
+
+SCDKAPa1$bpscorrect <- SCDKAPa1$bpscorrect + ifelse(SCDKAPa1$edvisit_ng == "d", 1, 0)
+SCDKAPa1$bpscorrect <- SCDKAPa1$bpscorrect + ifelse(SCDKAPa1$socialinfluence_ng == "d", 1, 0)
+SCDKAPa1$bpscorrect <- SCDKAPa1$bpscorrect + ifelse(SCDKAPa1$psychosocial_ng == "a", 1, 0)
+SCDKAPa1$bpscorrect <- SCDKAPa1$bpscorrect + ifelse(SCDKAPa1$addictionadapt_ng == "2", 1, 0)
+
+# Convert the number of bpscorrect for all participants to the total percent of bpscorrect
+SCDKAPa1$bps_percentcorrect <- (SCDKAPa1$bpscorrect / 6) * 100
+
+# View(SCDKAPa1)
+```
+
+3. Check distribution of values / normality
+Number Correct
+```{r}
+# total
+hist(SCDKAPa1$totalcorrect, main = "Histogram of Total Correct") # Not normal
+shapiro.test(SCDKAPa1$totalcorrect)
+
+# comp
+hist(SCDKAPa1$compcorrect, main = "Histogram of Complication Correct") # Not normal
+shapiro.test(SCDKAPa1$compcorrect)
+
+# manage
+hist(SCDKAPa1$managecorrect, main = "Histogram of Management Correct") # Not normal
+shapiro.test(SCDKAPa1$managecorrect)
+
+# bps
+hist(SCDKAPa1$bpscorrect, main = "Histogram of Biopsychosocial Correct") # Not normal
+shapiro.test(SCDKAPa1$bpscorrect)
+```
+
+Percent Correct
+```{r}
+# total
+hist(SCDKAPa1$total_percentcorrect, main = "Histogram of Total Correct") # Not normal
+shapiro.test(SCDKAPa1$total_percentcorrect)
+
+# comp
+hist(SCDKAPa1$comp_percentcorrect, main = "Histogram of Complication Correct") # Not normal
+shapiro.test(SCDKAPa1$comp_percentcorrect)
+
+# manage
+hist(SCDKAPa1$manage_percentcorrect, main = "Histogram of Management Correct") # Not normal
+shapiro.test(SCDKAPa1$manage_percentcorrect)
+
+# bps
+hist(SCDKAPa1$bps_percentcorrect, main = "Histogram of Biopsychosocial Correct") # Not normal
+shapiro.test(SCDKAPa1$bps_percentcorrect)
+```
+
+4. Calculate table values
+### POPULATION TOTAL PERCENT CORRECT ###
+Total
+```{r}
+# Median and IQR for total sample size
+total_median_correct <- median(SCDKAPa1$total_percentcorrect, na.rm = TRUE)
+total_q1 <- quantile(SCDKAPa1$total_percentcorrect, probs = 0.25, na.rm = TRUE)
+total_q3 <- quantile(SCDKAPa1$total_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(paste("Total Median:", total_median_correct))
+print(paste("Total 25% IQR:", total_q1))
+print(paste("Total 75% IQR:", total_q3))
+```
+
+Complications - Total
+```{r}
+# Complications Median and IQR for total sample size
+comptotal_median_correct <- median(SCDKAPa1$comp_percentcorrect, na.rm = TRUE)
+total_q1 <- quantile(SCDKAPa1$comp_percentcorrect, probs = 0.25, na.rm = TRUE)
+total_q3 <- quantile(SCDKAPa1$comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(paste("Total Median:", comptotal_median_correct))
+print(paste("Total 25% IQR:", total_q1))
+print(paste("Total 75% IQR:", total_q3))
+```
+
+Management - Total
+```{r}
+# Managment Median and IQR for total sample size
+managetotal_median_correct <- median(SCDKAPa1$manage_percentcorrect, na.rm = TRUE)
+total_q1 <- quantile(SCDKAPa1$manage_percentcorrect, probs = 0.25, na.rm = TRUE)
+total_q3 <- quantile(SCDKAPa1$manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(paste("Total Median:", managetotal_median_correct))
+print(paste("Total 25% IQR:", total_q1))
+print(paste("Total 75% IQR:", total_q3))
+```
+
+Biopsychosocial - Total
+```{r}
+# Biopsychosocial Median and IQR for total sample size
+bpstotal_median_correct <- median(SCDKAPa1$bps_percentcorrect, na.rm = TRUE)
+total_q1 <- quantile(SCDKAPa1$bps_percentcorrect, probs = 0.25, na.rm = TRUE)
+total_q3 <- quantile(SCDKAPa1$bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(paste("Total Median:", bpstotal_median_correct))
+print(paste("Total 25% IQR:", total_q1))
+print(paste("Total 75% IQR:", total_q3))
+```
+
+### BY PROFESSION ###
+Total Correct
+```{r}
+# Median and IQR for each group
+totalmedian_iqr_by_group <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+# Print the median (and IQR) number correct
+print(totalmedian_iqr_by_group)
+
+# PValues - Perform the Kruskal-Wallis test
+kruskal.test(total_percentcorrect ~ profession_ng_up, data = SCDKAPa1)
+```
+
+Complications
+```{r}
+# Median and IQR for each group
+compmedian_iqr_by_group <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+# Median and IQR for total sample size
+totalcomp_median_correct <- median(SCDKAPa1$comp_percentcorrect, na.rm = TRUE)
+comptotal_q1 <- quantile(SCDKAPa1$comp_percentcorrect, probs = 0.25, na.rm = TRUE)
+comptotal_q3 <- quantile(SCDKAPa1$comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(compmedian_iqr_by_group)
+print(paste("Total Median:", totalcomp_median_correct))
+print(paste("Total 25% IQR:", comptotal_q1))
+print(paste("Total 75% IQR:", comptotal_q3))
+```
+
+Management
+```{r}
+# Median and IQR for each group
+managemedian_iqr_by_group <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+# Median and IQR for total sample size
+totalmanage_median_correct <- median(SCDKAPa1$manage_percentcorrect, na.rm = TRUE)
+managetotal_q1 <- quantile(SCDKAPa1$manage_percentcorrect, probs = 0.25, na.rm = TRUE)
+managetotal_q3 <- quantile(SCDKAPa1$manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(managemedian_iqr_by_group)
+print(paste("Total Median:", totalmanage_median_correct))
+print(paste("Total 25% IQR:", managetotal_q1))
+print(paste("Total 75% IQR:", managetotal_q3))
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each group
+bpsmedian_iqr_by_group <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+# Median and IQR for total sample size
+totalbps_median_correct <- median(SCDKAPa1$bps_percentcorrect, na.rm = TRUE)
+bpstotal_q1 <- quantile(SCDKAPa1$bps_percentcorrect, probs = 0.25, na.rm = TRUE)
+bpstotal_q3 <- quantile(SCDKAPa1$bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+
+# Print the median (and IQR) number correct
+print(bpsmedian_iqr_by_group)
+print(paste("Total Median:", totalbps_median_correct))
+print(paste("Total 25% IQR:", bpstotal_q1))
+print(paste("Total 75% IQR:", bpstotal_q3))
+```
+
+### BY AGE ###
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_age <- SCDKAPa1 %>%
+  group_by(age_ng) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_age
+
+# PValues - Perform the Kruskal-Wallis test
+kruskal.test(total_percentcorrect ~ age_ng, data = SCDKAPa1)
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_age <- SCDKAPa1 %>%
+  group_by(age_ng) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_age
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_age <- SCDKAPa1 %>%
+  group_by(age_ng) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_age
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_age <- SCDKAPa1 %>%
+  group_by(age_ng) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_age
+```
+
+### BY PATIENT POPULATION ###
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_patpop <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_patpop
+
+# PValues - Perform the Kruskal-Wallis test
+kruskal.test(total_percentcorrect ~ patient_pop_ng, data = SCDKAPa1)
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_patpop <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_patpop
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_patpop <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_patpop
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_patpop <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_patpop
+```
+
+### BY PRACTICE LOCATION ###
+# PRIMARY #
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_primpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___1) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_primpracloc
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_primpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___1) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_primpracloc
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_primpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___1) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_primpracloc
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_primpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___1) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_primpracloc
+```
+
+# SECONDARY #
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_secpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___2) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_secpracloc
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_secpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___2) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_secpracloc
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_secpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___2) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_secpracloc
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_secpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___2) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_secpracloc
+```
+
+# TERTIARY #
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_tertpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___3) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_tertpracloc
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_tertpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___3) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_tertpracloc
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_tertpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___3) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_tertpracloc
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_tertpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___3) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_tertpracloc
+```
+
+# PRIVATE #
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___4) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_privpracloc
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___4) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_privpracloc
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_privpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___4) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_privpracloc
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___4) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_privpracloc
+```
+
+# OTHER #
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___5) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_othpracloc
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___5) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_othpracloc
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_othpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___5) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_othpracloc
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___5) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_othpracloc
+```
+
+5. Conduct Wilcoxon rank-sum test test to compare percent correct within groups (comparing total percent correct) because the Kruskal-Wallis test yeilded significant results across all groups. Used a Wilcoxon rank-sum test (rather than PostHoc TukeyHSD) to compare significant differences between medians within groups.
+### AGE - WILCOXONRANKSUM ###
+```{r}
+# Create pairwise comparisons between levels of "age_ng"
+age_levels <- unique(SCDKAPa1$age_ng)
+
+# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
+for (i in 1:(length(age_levels) - 1)) {
+  for (j in (i + 1):length(age_levels)) {
+    age_group1 <- age_levels[i]
+    age_group2 <- age_levels[j]
+    
+    # Subset data for the two groups
+    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$age_ng == age_group1]
+    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$age_ng == age_group2]
+    
+    # Check if the groups are not empty
+    if (length(group1) == 0 | length(group2) == 0) {
+      cat("Warning: One or more groups is empty.\n")
+      next  # Skip to the next iteration if one or more groups is empty
+    }
+    
+    # Perform Wilcoxon rank-sum test
+    test_result <- wilcox.test(group1, group2)
+    
+    # Calculate medians
+    median_group1 <- median(group1, na.rm = TRUE)
+    median_group2 <- median(group2, na.rm = TRUE)
+    
+    # Check for NA values in medians
+    if (is.na(median_group1) | is.na(median_group2)) {
+      cat("Warning: One or more medians is NA.\n")
+      next  # Skip to the next iteration if one or more medians is NA
+    }
+    
+    # Print the results
+    cat("Comparison between", age_group1, "and", age_group2, ":\n")
+    cat("Median difference:", median_group1 - median_group2, "\n")
+    print(test_result)
+    cat("\n")
+  }
+}
+```
+
+### PROFESSION - WILCOXONRANKSUM ###
+```{r}
+# Create pairwise comparisons between levels of "age_ng"
+profession_levels <- unique(SCDKAPa1$profession_ng_up)
+
+# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
+for (i in 1:(length(profession_levels) - 1)) {
+  for (j in (i + 1):length(profession_levels)) {
+    profession_group1 <- profession_levels[i]
+    profession_group2 <- profession_levels[j]
+    
+    # Subset data for the two groups
+    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$profession_ng_up == profession_group1]
+    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$profession_ng_up == profession_group2]
+    
+    # Check if the groups are not empty
+    if (length(group1) == 0 | length(group2) == 0) {
+      cat("Warning: One or more groups is empty.\n")
+      next  # Skip to the next iteration if one or more groups is empty
+    }
+    
+    # Perform Wilcoxon rank-sum test
+    test_result <- wilcox.test(group1, group2)
+    
+    # Calculate medians
+    median_group1 <- median(group1, na.rm = TRUE)
+    median_group2 <- median(group2, na.rm = TRUE)
+    
+    # Check for NA values in medians
+    if (is.na(median_group1) | is.na(median_group2)) {
+      cat("Warning: One or more medians is NA.\n")
+      next  # Skip to the next iteration if one or more medians is NA
+    }
+    
+    # Print the results
+    cat("Comparison between", profession_group1, "and", profession_group2, ":\n")
+    cat("Median difference:", median_group1 - median_group2, "\n")
+    print(test_result)
+    cat("\n")
+  }
+}
+```
+
+
+### PATIENT POPULATION - WILCOXONRANKSUM ###
+```{r}
+# Create pairwise comparisons between levels of "age_ng"
+patpop_levels <- unique(SCDKAPa1$patient_pop_ng)
+
+# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
+for (i in 1:(length(patpop_levels) - 1)) {
+  for (j in (i + 1):length(patpop_levels)) {
+    patpop_group1 <- patpop_levels[i]
+    patpop_group2 <- patpop_levels[j]
+    
+    # Subset data for the two groups
+    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$patient_pop_ng == patpop_group1]
+    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$patient_pop_ng == patpop_group2]
+    
+    # Check if the groups are not empty
+    if (length(group1) == 0 | length(group2) == 0) {
+      cat("Warning: One or more groups is empty.\n")
+      next  # Skip to the next iteration if one or more groups is empty
+    }
+    
+    # Perform Wilcoxon rank-sum test
+    test_result <- wilcox.test(group1, group2)
+    
+    # Calculate medians
+    median_group1 <- median(group1, na.rm = TRUE)
+    median_group2 <- median(group2, na.rm = TRUE)
+    
+    # Check for NA values in medians
+    if (is.na(median_group1) | is.na(median_group2)) {
+      cat("Warning: One or more medians is NA.\n")
+      next  # Skip to the next iteration if one or more medians is NA
+    }
+    
+    # Print the results
+    cat("Comparison between", patpop_group1, "and", patpop_group2, ":\n")
+    cat("Median difference:", median_group1 - median_group2, "\n")
+    print(test_result)
+    cat("\n")
+  }
+}
+```
+
+### PRACTICE LOCATION - WILCOXONRANKSUM ###
+
+

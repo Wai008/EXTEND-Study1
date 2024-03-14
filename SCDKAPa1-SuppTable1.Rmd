@@ -1,0 +1,1220 @@
+---
+title: "SCDKAPa1-SuppTable1"
+author: "Kirstin"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  html_document: default
+---
+
+Install and Load Packages
+```{r}
+library(readr)
+library(dplyr)
+```
+
+1. Import and load data set
+```{r}
+SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
+# SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/SCDKAPAim1.csv") # older dataset version
+# View(SCDKAPa1)
+```
+
+2. Find the percent reporting use, stratified by rarely, freqeuntly, and always
+# Acetaminophen PO - tylenol_po_ng_v2#
+```{r}
+acetaminophenPO <- SCDKAPa1 %>%
+  filter(tylenol_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, tylenol_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[tylenol_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[tylenol_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(tylenol_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(acetaminophenPO)
+
+# total reporting use
+acetaminophenPO <- SCDKAPa1 %>%
+  filter(tylenol_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(tylenol_po_ng_v2 == 2),
+            count_3 = sum(tylenol_po_ng_v2 == 3),
+            count_4 = sum(tylenol_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / 208 * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(acetaminophenPO)
+```
+
+# Ibuprofen PO - ibuprofen_po_ng_v2 #
+```{r}
+IbuprofenPO <- SCDKAPa1 %>%
+  filter(ibuprofen_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, ibuprofen_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[ibuprofen_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[ibuprofen_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(ibuprofen_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(IbuprofenPO)
+
+# total reporting use
+IbuprofenPO <- SCDKAPa1 %>%
+  filter(ibuprofen_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(ibuprofen_po_ng_v2 == 2),
+            count_3 = sum(ibuprofen_po_ng_v2 == 3),
+            count_4 = sum(ibuprofen_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(IbuprofenPO)
+```
+
+Kertorolac PO - ketorolac_po_ng_v2
+```{r}
+KertorolacPO <- SCDKAPa1 %>%
+  filter(ketorolac_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, ketorolac_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[ketorolac_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[ketorolac_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(ketorolac_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(KertorolacPO)
+
+# total
+KertorolacPO <- SCDKAPa1 %>%
+  filter(ketorolac_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(ketorolac_po_ng_v2 == 2),
+            count_3 = sum(ketorolac_po_ng_v2 == 3),
+            count_4 = sum(ketorolac_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(KertorolacPO)
+```
+
+# Kertorolac IV - ketorolac_iv_ng_v2#
+```{r}
+KertorolacIV <- SCDKAPa1 %>%
+  filter(ketorolac_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, ketorolac_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[ketorolac_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[ketorolac_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(ketorolac_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(KertorolacIV)
+
+# total
+KertorolacIV <- SCDKAPa1 %>%
+  filter(ketorolac_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(ketorolac_iv_ng_v2 == 2),
+            count_3 = sum(ketorolac_iv_ng_v2 == 3),
+            count_4 = sum(ketorolac_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(KertorolacIV)
+```
+
+# Other NSAID - othernsaids_surv_ng_v2 #
+```{r}
+OtherNSAID <- SCDKAPa1 %>%
+  filter(othernsaids_surv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, othernsaids_surv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[othernsaids_surv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[othernsaids_surv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(othernsaids_surv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(OtherNSAID)
+
+# total
+OtherNSAID <- SCDKAPa1 %>%
+  filter(othernsaids_surv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(othernsaids_surv_ng_v2 == 2),
+            count_3 = sum(othernsaids_surv_ng_v2 == 3),
+            count_4 = sum(othernsaids_surv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(OtherNSAID)
+```
+
+# Diphenhydramine PO - benadryl_po_ng_v2 #
+```{r}
+DiphenhydraminePO <- SCDKAPa1 %>%
+  filter(benadryl_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, benadryl_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[benadryl_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[benadryl_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(benadryl_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(DiphenhydraminePO)
+
+# total
+DiphenhydraminePO <- SCDKAPa1 %>%
+  filter(benadryl_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(benadryl_po_ng_v2 == 2),
+            count_3 = sum(benadryl_po_ng_v2 == 3),
+            count_4 = sum(benadryl_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(DiphenhydraminePO)
+```
+
+# Diphenhydramine IV - benadryl_iv_ng_v2 #
+```{r}
+DiphenhydramineIV <- SCDKAPa1 %>%
+  filter(benadryl_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, benadryl_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[benadryl_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[benadryl_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(benadryl_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(DiphenhydramineIV)
+
+# total
+DiphenhydramineIV <- SCDKAPa1 %>%
+  filter(benadryl_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(benadryl_iv_ng_v2 == 2),
+            count_3 = sum(benadryl_iv_ng_v2 == 3),
+            count_4 = sum(benadryl_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(DiphenhydramineIV)
+```
+
+# Diphenhydramine SubQ - benadryl_sq_ng_v2 #
+```{r}
+DiphenhydramineSubQ <- SCDKAPa1 %>%
+  filter(benadryl_sq_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, benadryl_sq_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[benadryl_sq_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[benadryl_sq_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(benadryl_sq_ng_v2 %in% c(1, 2, 3, 4))
+
+print(DiphenhydramineSubQ)
+
+# total
+DiphenhydramineSubQ <- SCDKAPa1 %>%
+  filter(benadryl_sq_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(benadryl_sq_ng_v2 == 2),
+            count_3 = sum(benadryl_sq_ng_v2 == 3),
+            count_4 = sum(benadryl_sq_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(DiphenhydramineSubQ)
+```
+
+# Diphenhydramine PCA - benadryl_pca_ng_v2 #
+```{r}
+DiphenhydraminePCA <- SCDKAPa1 %>%
+  filter(benadryl_pca_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, benadryl_pca_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[benadryl_pca_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[benadryl_pca_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(benadryl_pca_ng_v2 %in% c(1, 2, 3, 4))
+
+print(DiphenhydraminePCA)
+
+# total
+DiphenhydraminePCA <- SCDKAPa1 %>%
+  filter(benadryl_pca_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(benadryl_pca_ng_v2 == 2),
+            count_3 = sum(benadryl_pca_ng_v2 == 3),
+            count_4 = sum(benadryl_pca_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(DiphenhydraminePCA)
+```
+
+# Other Antihistamine - otherantihist_ng_v2 #
+```{r}
+OtherAntihistamine <- SCDKAPa1 %>%
+  filter(otherantihist_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, otherantihist_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[otherantihist_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[otherantihist_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(otherantihist_ng_v2 %in% c(1, 2, 3, 4))
+
+print(OtherAntihistamine)
+
+# total
+OtherAntihistamine <- SCDKAPa1 %>%
+  filter(otherantihist_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(otherantihist_ng_v2 == 2),
+            count_3 = sum(otherantihist_ng_v2 == 3),
+            count_4 = sum(otherantihist_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(OtherAntihistamine)
+```
+
+# Morphine PO - morphine_po_ng_v2 #
+```{r}
+MorphinePO <- SCDKAPa1 %>%
+  filter(morphine_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, morphine_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[morphine_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[morphine_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(morphine_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MorphinePO)
+
+# total
+MorphinePO <- SCDKAPa1 %>%
+  filter(morphine_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(morphine_po_ng_v2 == 2),
+            count_3 = sum(morphine_po_ng_v2 == 3),
+            count_4 = sum(morphine_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MorphinePO)
+```
+
+# Morphine IV - morphine_iv_ng_v2 #
+```{r}
+MorphineIV <- SCDKAPa1 %>%
+  filter(morphine_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, morphine_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[morphine_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[morphine_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(morphine_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MorphineIV)
+
+# total
+MorphineIV <- SCDKAPa1 %>%
+  filter(morphine_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(morphine_iv_ng_v2 == 2),
+            count_3 = sum(morphine_iv_ng_v2 == 3),
+            count_4 = sum(morphine_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MorphineIV)
+```
+
+# Morphine SubQ - morphine_sq_ng_v2 #
+```{r}
+MorphineSubQ <- SCDKAPa1 %>%
+  filter(morphine_sq_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, morphine_sq_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[morphine_sq_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[morphine_sq_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(morphine_sq_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MorphineSubQ)
+
+# total
+MorphineSubQ <- SCDKAPa1 %>%
+  filter(morphine_sq_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(morphine_sq_ng_v2 == 2),
+            count_3 = sum(morphine_sq_ng_v2 == 3),
+            count_4 = sum(morphine_sq_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MorphineSubQ)
+```
+
+# Morphine PCA - morphine_pca_ng_v2 #
+```{r}
+MorphinePCA <- SCDKAPa1 %>%
+  filter(morphine_pca_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, morphine_pca_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[morphine_pca_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[morphine_pca_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(morphine_pca_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MorphinePCA)
+
+# total
+MorphinePCA <- SCDKAPa1 %>%
+  filter(morphine_pca_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(morphine_pca_ng_v2 == 2),
+            count_3 = sum(morphine_pca_ng_v2 == 3),
+            count_4 = sum(morphine_pca_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MorphinePCA)
+```
+
+# Hydromorphone PO - dilaudid_po_ng_v2 #
+```{r}
+HydromorphonePO <- SCDKAPa1 %>%
+  filter(dilaudid_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, dilaudid_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[dilaudid_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[dilaudid_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(dilaudid_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(HydromorphonePO)
+
+# total
+HydromorphonePO <- SCDKAPa1 %>%
+  filter(dilaudid_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(dilaudid_po_ng_v2 == 2),
+            count_3 = sum(dilaudid_po_ng_v2 == 3),
+            count_4 = sum(dilaudid_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(HydromorphonePO)
+```
+
+# Hydromorphone IV - dilaudid_iv_ng_v2 #
+```{r}
+HydromorphoneIV <- SCDKAPa1 %>%
+  filter(dilaudid_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, dilaudid_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[dilaudid_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[dilaudid_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(dilaudid_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(HydromorphoneIV)
+
+# total
+HydromorphoneIV <- SCDKAPa1 %>%
+  filter(dilaudid_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(dilaudid_iv_ng_v2 == 2),
+            count_3 = sum(dilaudid_iv_ng_v2 == 3),
+            count_4 = sum(dilaudid_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(HydromorphoneIV)
+```
+
+# Hydromorphone SubQ - didaudid_sq_ng_v2 #
+```{r}
+HydromorphoneSubQ <- SCDKAPa1 %>%
+  filter(didaudid_sq_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, didaudid_sq_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[didaudid_sq_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[didaudid_sq_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(didaudid_sq_ng_v2 %in% c(1, 2, 3, 4))
+
+print(HydromorphoneSubQ)
+
+# total
+HydromorphoneSubQ <- SCDKAPa1 %>%
+  filter(didaudid_sq_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(didaudid_sq_ng_v2 == 2),
+            count_3 = sum(didaudid_sq_ng_v2 == 3),
+            count_4 = sum(didaudid_sq_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(HydromorphoneSubQ)
+```
+
+# Hydromorphone PCA - dilaudid_pca_ng_v2 #
+```{r}
+HydromorphonePCA <- SCDKAPa1 %>%
+  filter(dilaudid_pca_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, dilaudid_pca_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[dilaudid_pca_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[dilaudid_pca_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(dilaudid_pca_ng_v2 %in% c(1, 2, 3, 4))
+
+print(HydromorphonePCA)
+
+# total
+HydromorphonePCA <- SCDKAPa1 %>%
+  filter(dilaudid_pca_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(dilaudid_pca_ng_v2 == 2),
+            count_3 = sum(dilaudid_pca_ng_v2 == 3),
+            count_4 = sum(dilaudid_pca_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(HydromorphonePCA)
+```
+
+# Oxycodone/oxycontin PO - oxycodone_po_ng_v2 #
+```{r}
+Oxycodone_oxycontinPO <- SCDKAPa1 %>%
+  filter(oxycodone_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, oxycodone_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[oxycodone_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[oxycodone_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(oxycodone_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(Oxycodone_oxycontinPO)
+
+# total
+Oxycodone_oxycontinPO <- SCDKAPa1 %>%
+  filter(oxycodone_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(oxycodone_po_ng_v2 == 2),
+            count_3 = sum(oxycodone_po_ng_v2 == 3),
+            count_4 = sum(oxycodone_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(Oxycodone_oxycontinPO)
+```
+
+# Hydrocodone and Acetaminophen PO - norco_po_ng_v2 #
+```{r}
+Hydrocodone_AcetaminophenPO <- SCDKAPa1 %>%
+  filter(norco_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, norco_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[norco_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[norco_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(norco_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(Hydrocodone_AcetaminophenPO)
+
+# total
+Hydrocodone_AcetaminophenPO <- SCDKAPa1 %>%
+  filter(norco_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(norco_po_ng_v2 == 2),
+            count_3 = sum(norco_po_ng_v2 == 3),
+            count_4 = sum(norco_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(Hydrocodone_AcetaminophenPO)
+```
+
+# Oxycodone and Acetaminophen PO - percocet_po_ng_v2 #
+```{r}
+Oxycodone_AcetaminophenPO <- SCDKAPa1 %>%
+  filter(percocet_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, percocet_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[percocet_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[percocet_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(percocet_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(Oxycodone_AcetaminophenPO)
+
+# total
+Oxycodone_AcetaminophenPO <- SCDKAPa1 %>%
+  filter(percocet_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(percocet_po_ng_v2 == 2),
+            count_3 = sum(percocet_po_ng_v2 == 3),
+            count_4 = sum(percocet_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(Oxycodone_AcetaminophenPO)
+```
+
+# Codeine PO - codeine_po_ng_v2 #
+```{r}
+CodeinePO <- SCDKAPa1 %>%
+  filter(codeine_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, codeine_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[codeine_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[codeine_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(codeine_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(CodeinePO)
+
+# total
+CodeinePO <- SCDKAPa1 %>%
+  filter(codeine_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(codeine_po_ng_v2 == 2),
+            count_3 = sum(codeine_po_ng_v2 == 3),
+            count_4 = sum(codeine_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(CodeinePO)
+```
+
+# Codeine IV - codeine_iv_ng_v2 #
+```{r}
+CodeineIV <- SCDKAPa1 %>%
+  filter(codeine_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, codeine_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[codeine_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[codeine_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(codeine_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(CodeineIV)
+
+# total
+CodeineIV <- SCDKAPa1 %>%
+  filter(codeine_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(codeine_iv_ng_v2 == 2),
+            count_3 = sum(codeine_iv_ng_v2 == 3),
+            count_4 = sum(codeine_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(CodeineIV)
+```
+
+# Merperidine PO - demerol_po_ng_v2 #
+```{r}
+MerperidinePO <- SCDKAPa1 %>%
+  filter(demerol_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, demerol_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[demerol_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[demerol_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(demerol_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MerperidinePO)
+
+# total
+MerperidinePO <- SCDKAPa1 %>%
+  filter(demerol_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(demerol_po_ng_v2 == 2),
+            count_3 = sum(demerol_po_ng_v2 == 3),
+            count_4 = sum(demerol_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MerperidinePO)
+
+```
+
+# Merperidine IV - demerol_iv_ng_v2 #
+```{r}
+MerperidineIV <- SCDKAPa1 %>%
+  filter(demerol_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, demerol_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[demerol_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[demerol_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(demerol_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MerperidineIV)
+
+# total
+MerperidineIV <- SCDKAPa1 %>%
+  filter(demerol_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(demerol_iv_ng_v2 == 2),
+            count_3 = sum(demerol_iv_ng_v2 == 3),
+            count_4 = sum(demerol_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MerperidineIV)
+
+```
+
+# Merperidine SubQ - demerol_sq_ng_v2 #
+```{r}
+MerperidineSubQ <- SCDKAPa1 %>%
+  filter(demerol_sq_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, demerol_sq_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[demerol_sq_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[demerol_sq_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(demerol_sq_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MerperidineSubQ)
+
+# total
+MerperidineSubQ <- SCDKAPa1 %>%
+  filter(demerol_sq_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(demerol_sq_ng_v2 == 2),
+            count_3 = sum(demerol_sq_ng_v2 == 3),
+            count_4 = sum(demerol_sq_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MerperidineSubQ)
+
+```
+
+# Merperidine PCA - demerol_pca_ng_v2 #
+```{r}
+MerperidinePCA <- SCDKAPa1 %>%
+  filter(demerol_pca_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, demerol_pca_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[demerol_pca_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[demerol_pca_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(demerol_pca_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MerperidinePCA)
+
+# total 
+MerperidinePCA <- SCDKAPa1 %>%
+  filter(demerol_pca_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(demerol_pca_ng_v2 == 2),
+            count_3 = sum(demerol_pca_ng_v2 == 3),
+            count_4 = sum(demerol_pca_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MerperidinePCA)
+
+```
+
+# Fentanyl PO - fentanyl_po_ng_v2 #
+```{r}
+FentanylPO <- SCDKAPa1 %>%
+  filter(fentanyl_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, fentanyl_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[fentanyl_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[fentanyl_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(fentanyl_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(FentanylPO)
+
+# total
+FentanylPO <- SCDKAPa1 %>%
+  filter(fentanyl_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(fentanyl_po_ng_v2 == 2),
+            count_3 = sum(fentanyl_po_ng_v2 == 3),
+            count_4 = sum(fentanyl_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(FentanylPO)
+
+```
+
+# Fentanyl IV - fentanyl_iv_ng_v2 #
+```{r}
+FentanylIV <- SCDKAPa1 %>%
+  filter(fentanyl_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, fentanyl_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[fentanyl_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[fentanyl_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(fentanyl_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(FentanylIV)
+
+# total
+FentanylIV <- SCDKAPa1 %>%
+  filter(fentanyl_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(fentanyl_iv_ng_v2 == 2),
+            count_3 = sum(fentanyl_iv_ng_v2 == 3),
+            count_4 = sum(fentanyl_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(FentanylIV)
+
+```
+
+# Fentanyl PCA - fentanyl_pca_ng_v2 #
+```{r}
+FentanylPCA <- SCDKAPa1 %>%
+  filter(fentanyl_pca_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, fentanyl_pca_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[fentanyl_pca_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[fentanyl_pca_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(fentanyl_pca_ng_v2 %in% c(1, 2, 3, 4))
+
+print(FentanylPCA)
+
+# total
+FentanylPCA <- SCDKAPa1 %>%
+  filter(fentanyl_pca_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(fentanyl_pca_ng_v2 == 2),
+            count_3 = sum(fentanyl_pca_ng_v2 == 3),
+            count_4 = sum(fentanyl_pca_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(FentanylPCA)
+
+```
+
+# Methadone PO - methadone_po_ng_v2 #
+```{r}
+MethadonePO <- SCDKAPa1 %>%
+  filter(methadone_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, methadone_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[methadone_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[methadone_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(methadone_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MethadonePO)
+
+# total
+MethadonePO <- SCDKAPa1 %>%
+  filter(methadone_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(methadone_po_ng_v2 == 2),
+            count_3 = sum(methadone_po_ng_v2 == 3),
+            count_4 = sum(methadone_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MethadonePO)
+
+```
+
+# Methadone IV - methadone_iv_ng_v2 #
+```{r}
+MethadoneIV <- SCDKAPa1 %>%
+  filter(methadone_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, methadone_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[methadone_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[methadone_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(methadone_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(MethadoneIV)
+
+# total
+MethadoneIV <- SCDKAPa1 %>%
+  filter(methadone_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(methadone_iv_ng_v2 == 2),
+            count_3 = sum(methadone_iv_ng_v2 == 3),
+            count_4 = sum(methadone_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(MethadoneIV)
+
+```
+
+# Other opiate - otheropiate_ng_v2 #
+```{r}
+Otheropiate <- SCDKAPa1 %>%
+  filter(otheropiate_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, otheropiate_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[otheropiate_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[otheropiate_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(otheropiate_ng_v2 %in% c(1, 2, 3, 4))
+
+print(Otheropiate)
+
+# total
+Otheropiate <- SCDKAPa1 %>%
+  filter(otheropiate_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(otheropiate_ng_v2 == 2),
+            count_3 = sum(otheropiate_ng_v2 == 3),
+            count_4 = sum(otheropiate_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(Otheropiate)
+
+```
+
+# Tramadol PO - tramadol_po_ng_v2 #
+```{r}
+TramadolPO <- SCDKAPa1 %>%
+  filter(tramadol_po_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, tramadol_po_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[tramadol_po_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[tramadol_po_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(tramadol_po_ng_v2 %in% c(1, 2, 3, 4))
+
+print(TramadolPO)
+
+# total
+TramadolPO <- SCDKAPa1 %>%
+  filter(tramadol_po_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(tramadol_po_ng_v2 == 2),
+            count_3 = sum(tramadol_po_ng_v2 == 3),
+            count_4 = sum(tramadol_po_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(TramadolPO)
+```
+
+# Tramadol IV - tramadol_iv_ng_v2 #
+```{r}
+TramadolIV <- SCDKAPa1 %>%
+  filter(tramadol_iv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, tramadol_iv_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[tramadol_iv_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[tramadol_iv_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(tramadol_iv_ng_v2 %in% c(1, 2, 3, 4))
+
+print(TramadolIV)
+
+# total
+TramadolIV <- SCDKAPa1 %>%
+  filter(tramadol_iv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(tramadol_iv_ng_v2 == 2),
+            count_3 = sum(tramadol_iv_ng_v2 == 3),
+            count_4 = sum(tramadol_iv_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(TramadolIV)
+```
+
+# Other medication - othermed_ng_v2 #
+```{r}
+Othermedication <- SCDKAPa1 %>%
+  filter(othermed_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  group_by(profession_ng_up, othermed_ng_v2) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  group_by(profession_ng_up) %>%
+  mutate(total = sum(count)) %>%
+  mutate(percent = count / total * 100) %>%
+  mutate(totalreportinguse = sum(count[othermed_ng_v2 %in% c(2, 3, 4)]),
+       totalnouse = sum(count[othermed_ng_v2 == 1]),
+       totalpart = sum(count),
+       percentwuse = totalreportinguse / totalpart * 100,
+       percentwoutuse = totalnouse / totalpart * 100) %>%
+  filter(othermed_ng_v2 %in% c(1, 2, 3, 4))
+
+print(Othermedication)
+
+# total
+Othermedication <- SCDKAPa1 %>%
+  filter(othermed_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(othermed_ng_v2 == 2),
+            count_3 = sum(othermed_ng_v2 == 3),
+            count_4 = sum(othermed_ng_v2 == 4),
+            total_participants = n()) %>%
+  mutate(total_percent = (count_2 + count_3 + count_4) / total_participants * 100,
+         percent_2 = count_2 / total_participants * 100,
+         percent_3 = count_3 / total_participants * 100,
+         percent_4 = count_4 / total_participants * 100)
+
+print(Othermedication)
+```
