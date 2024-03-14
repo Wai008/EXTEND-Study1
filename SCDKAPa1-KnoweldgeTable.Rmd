@@ -160,6 +160,9 @@ total_q3 <- quantile(SCDKAPa1$total_percentcorrect, probs = 0.75, na.rm = TRUE)
 print(paste("Total Median:", total_median_correct))
 print(paste("Total 25% IQR:", total_q1))
 print(paste("Total 75% IQR:", total_q3))
+
+# Confidence Intervals
+t.test(SCDKAPa1$total_percentcorrect)
 ```
 
 Complications - Total
@@ -218,6 +221,16 @@ print(totalmedian_iqr_by_group)
 
 # PValues - Perform the Kruskal-Wallis test
 kruskal.test(total_percentcorrect ~ profession_ng_up, data = SCDKAPa1)
+
+# Confidence Intervals of Total % correct for each profession category
+ci_by_professiongroup <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_professiongroup
 ```
 
 Complications
@@ -292,6 +305,14 @@ print(paste("Total 75% IQR:", bpstotal_q3))
 ### BY AGE ###
 Total Correct
 ```{r}
+# Re-categorize age group
+SCDKAPa1 <- SCDKAPa1 %>%
+  dplyr::mutate(age_ng = case_when( #age category
+    age_ng == 2 ~ 1, # Recode 18 - 35 as 1
+    age_ng %in% c(3, 4) ~ 2, # Recode 36 - 65+ as 2
+    TRUE ~  age_ng # Keep other values unchanged
+  ))
+
 # Median and IQR for each age group - total
 totalmedian_iqr_by_age <- SCDKAPa1 %>%
   group_by(age_ng) %>%
@@ -305,6 +326,16 @@ totalmedian_iqr_by_age
 
 # PValues - Perform the Kruskal-Wallis test
 kruskal.test(total_percentcorrect ~ age_ng, data = SCDKAPa1)
+
+# Confidence Intervals of Total % correct for each age category
+ci_by_agegroup <- SCDKAPa1 %>%
+  group_by(age_ng) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_agegroup
 ```
 
 Complications
@@ -365,6 +396,16 @@ totalmedian_iqr_by_patpop
 
 # PValues - Perform the Kruskal-Wallis test
 kruskal.test(total_percentcorrect ~ patient_pop_ng, data = SCDKAPa1)
+
+# Confidence Intervals of Total % correct for each patient population
+ci_by_patpop <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_patpop
 ```
 
 Complications
@@ -423,6 +464,16 @@ totalmedian_iqr_by_primpracloc <- SCDKAPa1 %>%
   )
 
 totalmedian_iqr_by_primpracloc
+
+# Confidence Intervals of Total % correct for each practice location
+ci_by_primpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___1) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_primpracloc
 ```
 
 Complications
@@ -480,6 +531,16 @@ totalmedian_iqr_by_secpracloc <- SCDKAPa1 %>%
   )
 
 totalmedian_iqr_by_secpracloc
+
+# Confidence Intervals of Total % correct for each practice location
+ci_by_secpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___2) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_secpracloc
 ```
 
 Complications
@@ -537,6 +598,16 @@ totalmedian_iqr_by_tertpracloc <- SCDKAPa1 %>%
   )
 
 totalmedian_iqr_by_tertpracloc
+
+# Confidence Intervals of Total % correct for each practice location
+ci_by_tertpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___3) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_tertpracloc
 ```
 
 Complications
@@ -594,6 +665,16 @@ totalmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
   )
 
 totalmedian_iqr_by_privpracloc
+
+# Confidence Intervals of Total % correct for each practice location
+ci_by_privpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___4) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_privpracloc
 ```
 
 Complications
@@ -651,6 +732,16 @@ totalmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
   )
 
 totalmedian_iqr_by_othpracloc
+
+# Confidence Intervals of Total % correct for each practice location
+ci_by_othpracloc <- SCDKAPa1 %>%
+  group_by(practice_location_ng___5) %>%
+  summarize(
+    ci_lower = t.test(total_percentcorrect)$conf.int[1],
+    ci_upper = t.test(total_percentcorrect)$conf.int[2]
+  )
+
+ci_by_othpracloc # Negative lower CI and really high upper CI, probably due to small sample size?
 ```
 
 Complications
