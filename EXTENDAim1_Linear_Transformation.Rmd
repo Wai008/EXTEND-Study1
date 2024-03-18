@@ -1,0 +1,91 @@
+---
+title: "test for linear"
+author: "Wai"
+date: "2024-03-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Installing package
+
+```{r}
+library(tidyverse)
+```
+
+# Importing EXTENDAim1 dataset
+
+```{r}
+SCDKAPAim1 <- read_csv("data/SCDKAPAim1.csv")
+```
+
+# Combining variable values (scales) that attribute to respective attitude. 
+
+```{r}
+sum_all_var <- SCDKAPAim1 %>% 
+  mutate(sum_positive = gladmed_ng + friends_ng + satiscare_ng + empathy_ng,
+         sum_negative = overreport_ng + failtocom_ng + abusedrugs_ng + manipu_ng + drugseek_ng + frustrate_ng,
+         sum_concerns = reqnarc_ng + comfort_ng + disputestaff_ng + ringsbell_ng,
+         sum_redflag = changebehav_ng + signout2_ng + tamperpca_ng) %>% 
+  select(sum_positive, sum_negative, sum_concerns, sum_redflag, record_id)
+```
+
+# Using scales package for linear transformation
+
+```{r}
+library(scales)
+```
+
+
+# Linear transformation of combined attitude scales 
+
+## sum_positive: transforming scale from __4 - 20__ to scale __0 - 100__
+## sum_negative: transforming scale from __6 - 30__ to scale __0 - 100__
+## sum_concerns: transforming scale from __4 - 20__ to scale __0 - 100__
+## sum_redflag: transforming scale from __3 - 15__ to scale __0 - 100__
+
+```{r}
+
+id <- sum_all_var$record_id
+
+linear_scale1 <- round(rescale(sum_all_var$sum_positive, to = c(0, 100))) 
+
+linear_scale2 <- round(rescale(sum_all_var$sum_negative, to = c(0, 100))) 
+
+linear_scale3 <- round(rescale(sum_all_var$sum_concerns, to = c(0, 100))) 
+
+linear_scale4 <- round(rescale(sum_all_var$sum_redflag, to = c(0, 100))) 
+                                     
+```
+
+# Creating new dataset from the outputs of transformed variables
+
+```{r}
+sum_all_var_l <- data.frame(
+  record_id = id,
+  sum_positive_l = linear_scale1,
+  sum_negative_l = linear_scale2,
+  sum_concerns_l = linear_scale3,
+  sum_redflag_l = linear_scale4
+)
+```
+
+
+```{r}
+library(writexl)
+```
+
+# Exporting dataset to compare with the dataset with original scale
+
+```{r}
+write_xlsx(sum_all_var_l, "sum_all_var_l.xlsx")
+```
+
+# Exporting dataset with original scale
+
+```{r}
+write_xlsx(sum_all_var, "sum_all_var.xlsx")
+```
+
