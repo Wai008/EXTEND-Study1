@@ -43,21 +43,37 @@ library(scales)
 
 ## sum_positive: transforming scale from __4 - 20__ to scale __0 - 100__
 ## sum_negative: transforming scale from __6 - 30__ to scale __0 - 100__
-## sum_concerns: transforming scale from __4 - 20__ to scale __0 - 100__
-## sum_redflag: transforming scale from __3 - 15__ to scale __0 - 100__
+## sum_concerns: transforming scale from __4 - 24__ to scale __0 - 100__
+## sum_redflag: transforming scale from __3 - 18__ to scale __0 - 100__
 
 ```{r}
 
 id <- sum_all_var$record_id
 
-linear_scale1 <- round(rescale(sum_all_var$sum_positive, to = c(0, 100))) 
+linear_scale1 <- round(rescale(
+  sum_all_var$sum_positive,
+  to = c(0,100),
+  from = c(4,20)
+))
 
-linear_scale2 <- round(rescale(sum_all_var$sum_negative, to = c(0, 100))) 
+linear_scale2 <- round(rescale(
+  sum_all_var$sum_negative,
+  to = c(0, 100),
+  from = c(6,30)
+))
 
-linear_scale3 <- round(rescale(sum_all_var$sum_concerns, to = c(0, 100))) 
+linear_scale3 <- round(rescale(
+  sum_all_var$sum_concerns,
+  to = c(0, 100),
+  from = c(4,24)
+))
 
-linear_scale4 <- round(rescale(sum_all_var$sum_redflag, to = c(0, 100))) 
-                                     
+linear_scale4 <- round(rescale(
+  sum_all_var$sum_redflag,
+  to = c(0, 100),
+  from = c(3,18)
+))
+                                   
 ```
 
 # Creating new dataset from the outputs of transformed variables
