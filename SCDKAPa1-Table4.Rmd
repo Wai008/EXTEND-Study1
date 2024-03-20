@@ -18,8 +18,10 @@ library(table1)
 ## Table 4a and 4b - Kirstin ##
 1. Import and load data set
 ```{r}
-SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
+#SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
 # SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/SCDKAPAim1.csv") # older dataset version
+
+SCDKAPa1 <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv") #Uploaded dataset to check the code error
 ```
 
 2. Ensure appropriate variable character (as factor OR as numeric) - Table 4a and 4b
@@ -184,6 +186,15 @@ table1(~ hurx_up + hucollab_ng + consultscd_ng + counselmiss_ng + educatescd_ng 
 
 ## Table 4c. Healthcare Provider Adherence to Guideline Based Blood Transfusion Recommendations - Wai
 
+Section Header: Please indicate how frequently you (or you and your SCD expert colleague) do the following:
+
+scale: 1 (yes), 2 (no)
+
+scale: 1 (never), 2 (rarely), 3 (frequently), 4 (always)
+
+profession type     : 1 (physician), 2 (nurse), 3 (other)
+patient pop type    : 1 (adults), 2 (peds), 3 (both)
+
 ```{r}
 SCDKAPa1 %>% 
   select(record_id, ordertransfus_ng:chelatthera_ng)
@@ -194,24 +205,69 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
-  group_by(ordertransfus_ng) %>% 
-  count()
+  group_by(ordertransfus_ng, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(ordertransfus_ng, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
 ```
 
 ### collabtransfus_ng - Do you work with a hematologist/SCD expert who utilizes/orders blood transfusions for individuals with SCD?	
 
 ```{r}
 SCDKAPa1 %>% 
-  group_by(collabtransfus_ng) %>% 
-  count()
+  group_by(collabtransfus_ng, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(collabtransfus_ng, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
 ```
 
 ### xchangetransfus - Do you have access to the equipment and personnel necessary to provide exchange transfusions?	
 
 ```{r}
 SCDKAPa1 %>% 
-  group_by(xchangetransfus) %>% 
-  count()
+  group_by(xchangetransfus, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(xchangetransfus, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
 ```
 
 
@@ -225,8 +281,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -241,8 +296,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -254,10 +308,9 @@ SCDKAPa1 %>%
   summarise(
     n = n()
   ) %>% 
-  mutate(
+ mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -269,10 +322,9 @@ SCDKAPa1 %>%
   summarise(
     n = n()
   ) %>% 
-  mutate(
+ mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -284,10 +336,9 @@ SCDKAPa1 %>%
   summarise(
     n = n()
   ) %>% 
-  mutate(
+ mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -299,10 +350,9 @@ SCDKAPa1 %>%
   summarise(
     n = n()
   ) %>% 
-  mutate(
+ mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -314,10 +364,9 @@ SCDKAPa1 %>%
   summarise(
     n = n()
   ) %>% 
-  mutate(
+mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -331,8 +380,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -344,13 +392,11 @@ SCDKAPa1 %>%
   summarise(
     n = n()
   ) %>% 
-  mutate(
+ mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
-
 
 
 ## Table 4b.  Healthcare Provider Adherence to …
@@ -371,8 +417,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -386,8 +431,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -401,8 +445,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -416,8 +459,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -431,8 +473,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -446,8 +487,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -461,8 +501,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -476,8 +515,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -491,8 +529,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -506,8 +543,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -521,8 +557,7 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
 
@@ -536,7 +571,6 @@ SCDKAPa1 %>%
   ) %>% 
   mutate(
     total = sum(n),
-    percent = n/total*100,
-    percent = sprintf("%.1f", percent)
+    percentage = round(n/sum(n)*100,1)
   )
 ```
