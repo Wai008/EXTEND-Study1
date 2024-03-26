@@ -1,0 +1,74 @@
+---
+title: "Cronbach's alpha"
+author: "Wai"
+date: "2024-03-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading packages
+
+```{r}
+library(tidyverse)
+library(psych)
+```
+
+
+# Importing dataset
+
+```{r}
+SCDKAPa1 <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
+```
+
+# The following Cronbach's alpha are calculated based on variables with original values/scales.
+
+* For positive attitude variables
+
+```{r}
+alpha_pos <- SCDKAPa1 %>% 
+  select(gladmed_ng, friends_ng, satiscare_ng, empathy_ng)
+
+alpha(alpha_pos, na.rm = TRUE)
+```
+
+* For negative attitude variables
+
+```{r}
+alpha_neg <- SCDKAPa1 %>% 
+  select(overreport_ng, failtocom_ng, abusedrugs_ng, manipu_ng, drugseek_ng, frustrate_ng)
+
+alpha(alpha_neg, na.rm = TRUE)
+```
+
+* For concerns raising behaviors variables
+
+```{r}
+alpha_con <- SCDKAPa1 %>% 
+  select(reqnarc_ng, comfort_ng, disputestaff_ng, ringsbell_ng)
+
+alpha(alpha_con, na.rm = TRUE)
+```
+
+* For red-flag behaviors variables
+
+```{r}
+alpha_red <- SCDKAPa1 %>% 
+  select(changebehav_ng, signout2_ng, tamperpca_ng)
+
+alpha(alpha_red, na.rm = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+

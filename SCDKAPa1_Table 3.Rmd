@@ -1,0 +1,580 @@
+---
+title: "EXTENDAim1 table 3"
+author: "Wai"
+date: "2024-02-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load packages for analysis
+
+```{r}
+library(tidyverse)
+```
+# Importing datasets
+
+```{r}
+sum_all_var <- read_csv("data/sum_all_var_l.csv")
+original <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
+```
+
+
+# Joining datasets 
+
+```{r}
+SCDKAPa1 <- original %>% 
+  left_join(sum_all_var, by = "record_id")
+```
+
+Now we got the final dataset that can be used for the data analysis of SCDKAP Aim1 Table 3 (attitudes). Attitude scales have been changed on a scale of 0 to 100. 
+
+
+# Checking normality of data distribution before conducting analysis for table 3: attitude scores
+
+```{r}
+
+SCDKAPa1 %>% 
+  ggplot(aes(x = sum_positive_l)) +
+  geom_histogram()
+
+SCDKAPa1 %>% 
+  ggplot(aes(x = sum_negative_l)) +
+  geom_histogram()
+
+SCDKAPa1 %>% 
+  ggplot(aes(x = sum_concerns_l)) +
+  geom_histogram()
+
+SCDKAPa1 %>% 
+  ggplot(aes(x = sum_redflag_l)) +
+  geom_histogram()
+
+# default bins = 30 was used as the probability of each value is between 0 - 30.
+```
+
+## Checking normal distribution with Shapiro test
+
+```{r}
+shapiro.test(SCDKAPa1$sum_positive_l)
+shapiro.test(SCDKAPa1$sum_negative_l)
+shapiro.test(SCDKAPa1$sum_concerns_l)
+shapiro.test(SCDKAPa1$sum_redflag_l)
+
+```
+
+## checking normal distribution by Kurtosis test
+
+```{r}
+kurtosi(SCDKAPa1$sum_positive_l, na.rm = TRUE)
+
+kurtosi(SCDKAPa1$sum_negative_l, na.rm = TRUE)
+
+kurtosi(SCDKAPa1$sum_concerns_l, na.rm = TRUE)
+
+kurtosi(SCDKAPa1$sum_redflag_l, na.rm = TRUE)
+```
+
+## Checking normal distribution by skewness
+
+```{r}
+
+skew(SCDKAPa1$sum_positive_l, na.rm = TRUE)
+
+skew(SCDKAPa1$sum_negative_l, na.rm = TRUE)
+
+skew(SCDKAPa1$sum_concerns_l, na.rm = TRUE)
+
+skew(SCDKAPa1$sum_redflag_l, na.rm = TRUE)
+
+```
+
+Based on the results of histogram, shapiro test, kurtosis and skewness tests, it is confirmed that data are __not__ normally distributed.
+
+Therefore, we will report median/IQR and do the Kruskal Wallis Test.
+
+
+# Calculating for table (3): mean/sd/median/IQR/range for total scores and stratified by specific attitude
+
+## Total scores
+
+```{r}
+total_score_pos <- SCDKAPa1 %>% # Positive attitude
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_pos = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_pos = quantile(sum_positive_l, 0.75, na.rm = TRUE),
+            IQR_pos = IQR(sum_positive_l, na.rm = TRUE))
+total_score_pos
+
+
+total_score_neg <- SCDKAPa1 %>% # Negative attitude
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE),
+            IQR_neg = IQR(sum_negative_l, na.rm = TRUE))
+total_score_neg
+
+
+total_score_con <- SCDKAPa1 %>% # Negative attitude
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_con = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_con = quantile(sum_concerns_l, 0.75, na.rm = TRUE),
+            IQR_con = IQR(sum_concerns_l, na.rm = TRUE))
+total_score_con
+
+
+total_score_red <- SCDKAPa1 %>% # Negative attitude
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_red = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_red = quantile(sum_redflag_l, 0.75, na.rm = TRUE),
+            IQR_red = IQR(sum_redflag_l, na.rm = TRUE))
+total_score_red
+
+```
+
+## Calculating median/IQR for attitude variables grouping by Age
+
+```{r}
+
+age_number <- SCDKAPa1 %>% 
+  group_by(age_ng) %>% 
+  count()
+age_number
+
+age_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(age_ng) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+age_pos
+
+
+age_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(age_ng) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+age_neg
+
+
+age_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(age_ng) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+age_con
+
+age_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(age_ng) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+age_red
+```
+
+
+## Calculating median/IQR for attitude variables grouping by profession. __Please be careful__ when checking the prof data. 1 (Physician), 2 (Nurse), 3 (Other).
+
+```{r}
+
+prof_number <- SCDKAPa1 %>% 
+  group_by(profession_ng_up) %>% 
+  count()
+prof_number
+
+
+prof_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(profession_ng_up) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+prof_pos
+
+
+prof_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(profession_ng_up) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+prof_neg
+
+
+prof_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(profession_ng_up) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+prof_con
+
+prof_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(profession_ng_up) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+prof_red
+```
+
+## Calculating median/IQR for attitude variables grouping by Patient population. __1 (adult), 2 (paed), 3 (both)__
+
+```{r}
+
+pop_number <- SCDKAPa1 %>% 
+  group_by(patient_pop_ng) %>% 
+  count()
+pop_number
+
+pop_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(patient_pop_ng) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+pop_pos
+
+
+pop_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(patient_pop_ng) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+pop_neg
+
+
+pop_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(patient_pop_ng) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+pop_con
+
+pop_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(patient_pop_ng) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+pop_red
+```
+
+## Calculating median/IQR for attitude variables grouping by Practice location
+
+__Primary__
+
+```{r}
+
+location_number1 <- SCDKAPa1 %>% 
+  group_by(practice_location_ng___1) %>% 
+  count()
+location_number1
+
+loc1_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(practice_location_ng___1) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+loc1_pos
+
+
+loc1_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(practice_location_ng___1) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+loc1_neg
+
+
+loc1_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(practice_location_ng___1) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+loc1_con
+
+loc1_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(practice_location_ng___1) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+loc1_red
+```
+
+__Secondary__
+
+```{r}
+
+location_number2 <- SCDKAPa1 %>% 
+  group_by(practice_location_ng___2) %>% 
+  count()
+location_number2
+
+
+loc2_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(practice_location_ng___2) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+loc2_pos
+
+loc2_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(practice_location_ng___2) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+loc2_neg
+
+
+loc2_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(practice_location_ng___2) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+loc2_con
+
+loc2_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(practice_location_ng___2) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+loc2_red
+```
+
+
+__Tertiary__ 
+
+```{r}
+
+location_number3 <- SCDKAPa1 %>% 
+  group_by(practice_location_ng___3) %>% 
+  count()
+location_number3
+
+loc3_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(practice_location_ng___3) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+loc3_pos
+
+loc3_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(practice_location_ng___3) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+loc3_neg
+
+
+loc3_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(practice_location_ng___3) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+loc3_con
+
+loc3_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(practice_location_ng___3) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+loc3_red
+```
+
+__Private Healthcare__
+
+```{r}
+
+location_number4 <- SCDKAPa1 %>% 
+  group_by(practice_location_ng___4) %>% 
+  count()
+location_number4
+
+
+loc4_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(practice_location_ng___4) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+loc4_pos
+
+loc4_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(practice_location_ng___4) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+loc4_neg
+
+
+loc4_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(practice_location_ng___4) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+loc4_con
+
+loc4_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(practice_location_ng___4) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+loc4_red
+```
+
+__Other__
+
+```{r}
+
+location_number5 <- SCDKAPa1 %>% 
+  group_by(practice_location_ng___5) %>% 
+  count()
+location_number5
+
+
+loc5_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(practice_location_ng___5) %>% 
+  summarise(median(sum_positive_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
+loc5_pos
+
+loc5_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(practice_location_ng___5) %>% 
+  summarise(median(sum_negative_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
+loc5_neg
+
+
+loc5_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(practice_location_ng___5) %>% 
+  summarise(median(sum_concerns_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
+loc5_con
+
+loc5_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(practice_location_ng___5) %>% 
+  summarise(median(sum_redflag_l, na.rm = TRUE),
+            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
+            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
+loc5_red
+```
+
+# Kruskal Wallis test by using total sum of all variables attirbuting to one specific attitude if we decide data is __not__ normally distributed.
+
+## Comparison of attitudes stratified by age groups (18-35 | 35 - 65 | 65 years and olders)
+ 
+```{r}
+kruskal.test(sum_positive_l ~ age_ng, data = SCDKAPa1)
+
+kruskal.test(sum_negative_l ~ age_ng, data = SCDKAPa1)
+
+kruskal.test(sum_concerns_l ~ age_ng, data = SCDKAPa1)
+
+kruskal.test(sum_redflag_l ~ age_ng, data = SCDKAPa1)
+```
+ 
+```{r}
+library(dunn.test)
+```
+ 
+ 
+ ## Comparison of attitudes stratified by profession (Nurse | Physician | Other)
+ 
+```{r}
+
+kruskal.test(sum_positive_l ~ profession_ng_up, data = SCDKAPa1)
+
+kruskal.test(sum_negative_l ~ profession_ng_up, data = SCDKAPa1)
+
+kruskal.test(sum_concerns_l ~ profession_ng_up, data = SCDKAPa1)
+
+kruskal.test(sum_redflag_l ~ profession_ng_up, data = SCDKAPa1)
+
+```
+ 
+ 
+ ## Comparison of attitudes stratified by patient population (Adults | Paeds | Both)
+ 
+```{r}
+kruskal.test(sum_positive_l ~ patient_pop_ng, data = SCDKAPa1)
+
+kruskal.test(sum_negative_l ~ patient_pop_ng, data = SCDKAPa1)
+
+kruskal.test(sum_concerns_l ~ patient_pop_ng, data = SCDKAPa1)
+
+kruskal.test(sum_redflag_l ~ patient_pop_ng, data = SCDKAPa1)
+```
+ 
+```{r}
+dunn.test(SCDKAPa1$sum_positive_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
+
+dunn.test(SCDKAPa1$sum_negative_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
+
+dunn.test(SCDKAPa1$sum_concerns_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
+
+dunn.test(SCDKAPa1$sum_redflag_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
+```
+ 
+ 
+# Comparison of attitudes stratified by practice location (primary | secondary | tertiray | private | other)
+
+## Need to discuss with Statistician how we can analyse this data because the data under practice location are not mutually exclusive.
+ 
+```{r}
+#kruskal.test(sum_positive ~ , data = sum_all_var)
+
+#kruskal.test(sum_negative ~ , data = sum_all_var)
+
+#kruskal.test(sum_concerns ~ , data = sum_all_var)
+
+#kruskal.test(sum_redflag ~ , data = sum_all_var)
+```
+ 
+ 
+# Cronbach's alpha test for survey questionnaire 
+
+1. Install package "psych"
+2. run library(psych)
+
+```{r}
+library(psych)
+```
+
+
+* For positive attitude variables
+
+```{r}
+alpha_pos <- SCDKAPa1 %>% 
+  select(gladmed_ng, friends_ng, satiscare_ng, empathy_ng)
+
+alpha(alpha_pos, na.rm = TRUE)
+```
+
+* For negative attitude variables
+
+```{r}
+alpha_neg <- SCDKAPa1 %>% 
+  select(overreport_ng, failtocom_ng, abusedrugs_ng, manipu_ng, drugseek_ng, frustrate_ng)
+
+alpha(alpha_neg, na.rm = TRUE)
+```
+
+* For concerns raising behaviors variables
+
+```{r}
+alpha_con <- SCDKAPa1 %>% 
+  select(reqnarc_ng, comfort_ng, disputestaff_ng, ringsbell_ng)
+
+alpha(alpha_con, na.rm = TRUE)
+```
+
+* For red-flag behaviors variables
+
+```{r}
+alpha_red <- SCDKAPa1 %>% 
+  select(changebehav_ng, signout2_ng, tamperpca_ng)
+
+alpha(alpha_red, na.rm = TRUE)
+```
+
+
+
