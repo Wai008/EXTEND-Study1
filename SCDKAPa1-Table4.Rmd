@@ -399,7 +399,7 @@ SCDKAPa1 %>%
 ```
 
 
-## Table 4b.  Healthcare Provider Adherence to …
+## Table 4d.  Healthcare Provider Adherence to screening recommendations
 
 ```{r}
 SCDKAPa1 %>% 
@@ -574,3 +574,431 @@ SCDKAPa1 %>%
     percentage = round(n/sum(n)*100,1)
   )
 ```
+
+
+
+# Calculating binary variable for adherence 
+
+## Table 4c (binary)
+
+### Create new variable that combines the values of complete adh plus frequntly adh and the values of rarely plus never.
+
+scale: 1 (never), 2 (rarely), 3 (frequently), 4 (always)
+
+rescale: 1 (never & rarely), 2 (frequently & always), 3 (NA)
+
+
+```{r binary}
+binary_adh <- SCDKAPa1 %>% 
+  mutate(transfus10_ng = case_when(transfus10_ng %in% c(1,2) ~ 1,
+                             transfus10_ng %in% c(3,4) ~ 2,
+                             transfus10_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         reduchbs_ng = case_when(reduchbs_ng %in% c(1,2) ~ 1,
+                             reduchbs_ng %in% c(3,4) ~ 2,
+                             reduchbs_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         simpletransfus_ng = case_when(simpletransfus_ng %in% c(1,2) ~ 1,
+                             simpletransfus_ng %in% c(3,4) ~ 2,
+                             simpletransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         theratransfus_ng = case_when(theratransfus_ng %in% c(1,2) ~ 1,
+                             theratransfus_ng %in% c(3,4) ~ 2,
+                             theratransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         delaytransfus_ng = case_when(delaytransfus_ng %in% c(1,2) ~ 1,
+                             delaytransfus_ng %in% c(3,4) ~ 2,
+                             delaytransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         ipptransfus_ng = case_when(ipptransfus_ng %in% c(1,2) ~ 1,
+                             ipptransfus_ng %in% c(3,4) ~ 2,
+                             ipptransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         rbcantigen_ng = case_when(rbcantigen_ng %in% c(1,2) ~ 1,
+                             rbcantigen_ng %in% c(3,4) ~ 2,
+                             rbcantigen_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         leukreduc_ng = case_when(leukreduc_ng %in% c(1,2) ~ 1,
+                             leukreduc_ng %in% c(3,4) ~ 2,
+                             leukreduc_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         chelatthera_ng = case_when(chelatthera_ng %in% c(1,2) ~ 1,
+                             chelatthera_ng %in% c(3,4) ~ 2,
+                             chelatthera_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         proteinuria_ng = case_when(proteinuria_ng %in% c(1,2) ~ 1,
+                             proteinuria_ng %in% c(3,4) ~ 2,
+                             proteinuria_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         htn_ng = case_when(htn_ng %in% c(1,2) ~ 1,
+                             htn_ng %in% c(3,4) ~ 2,
+                             htn_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         bpchild_ng = case_when(bpchild_ng %in% c(1,2) ~ 1,
+                             bpchild_ng %in% c(3,4) ~ 2,
+                             bpchild_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         extremities_ng = case_when(extremities_ng %in% c(1,2) ~ 1,
+                             extremities_ng %in% c(3,4) ~ 2,
+                             extremities_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         transcdop_ng = case_when(transcdop_ng %in% c(1,2) ~ 1,
+                             transcdop_ng %in% c(3,4) ~ 2,
+                             transcdop_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         assessresp_ng = case_when(assessresp_ng %in% c(1,2) ~ 1,
+                             assessresp_ng %in% c(3,4) ~ 2,
+                             assessresp_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         reproriskasses_ng = case_when(reproriskasses_ng %in% c(1,2) ~ 1,
+                             reproriskasses_ng %in% c(3,4) ~ 2,
+                             reproriskasses_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         adultscdscreen_ng = case_when(adultscdscreen_ng %in% c(1,2) ~ 1,
+                             adultscdscreen_ng %in% c(3,4) ~ 2,
+                             adultscdscreen_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         assessavn_ng = case_when(assessavn_ng %in% c(1,2) ~ 1,
+                             assessavn_ng %in% c(3,4) ~ 2,
+                             assessavn_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         pregtransfuse_ng = case_when(pregtransfuse_ng %in% c(1,2) ~ 1,
+                             pregtransfuse_ng %in% c(3,4) ~ 2,
+                             pregtransfuse_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         assesssleepbreath_ng = case_when(assesssleepbreath_ng %in% c(1,2) ~ 1,
+                             assesssleepbreath_ng %in% c(3,4) ~ 2,
+                             assesssleepbreath_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         specialist_ng = case_when(specialist_ng %in% c(1,2) ~ 1,
+                             specialist_ng %in% c(3,4) ~ 2,
+                             specialist_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ))
+```
+
+### transfus10_ng	
+
+```{r}
+binary_adh %>% 
+  group_by(transfus10_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+### reduchbs_ng - Provide prophylactic blood transfusions for maximum reduction of hemoglobin S (< 30%) in individuals with HbSS	
+
+```{r}
+binary_adh %>% 
+  group_by(reduchbs_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### simpletransfus_ng - Order simple transfusion for uncomplicated vaso-occlusive episode	
+
+```{r}
+binary_adh %>% 
+  group_by(simpletransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+ mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### theratransfus_ng - Provide therapeutic blood transfusions for acute sickle cell disease complications	
+
+```{r}
+binary_adh %>% 
+  group_by(theratransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+ mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### delaytransfus_ng - Delay transfusion while seeking cause of acute, severe anemia	
+
+```{r}
+binary_adh %>% 
+  group_by(delaytransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+ mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### ipptransfus_ng - Create an individualized patient plan for the use of simple and/or exchange transfusion as part of disease management	
+
+```{r}
+binary_adh %>% 
+  group_by(ipptransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+ mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### rbcantigen_ng - Match for minor red blood cell antigens 
+
+```{r}
+binary_adh %>% 
+  group_by(rbcantigen_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### leukreduc_ng - Use pre-storage leukoreduction or bedside white blood cell filtration
+
+```{r}
+binary_adh %>% 
+  group_by(leukreduc_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### chelatthera_ng - Order chelation therapy
+
+```{r}
+binary_adh %>% 
+  group_by(chelatthera_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+ mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+## Table 4d (binary).  Healthcare Provider Adherence to screening recommendations
+
+### proteinuria_ng
+
+```{r}
+binary_adh %>% 
+  group_by(proteinuria_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### htn_ng - Screen for hypertension in adults (SBP≥130, DBP≥80)
+
+```{r}
+binary_adh %>% 
+  group_by(htn_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### bpchild_ng - Monitor BP in children
+
+```{r}
+binary_adh %>% 
+  group_by(bpchild_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### extremities_ng - Examine extremities and initiate treatment for active or healed ulcers
+
+```{r}
+binary_adh %>% 
+  group_by(extremities_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### transcdop_ng - Conduct annual transcranial doppler from ages 2 to 16 years according to STOP study methods (specific to HbSS, HbSβ0 thalassemia) 
+
+```{r}
+binary_adh %>% 
+  group_by(transcdop_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### assessresp_ng - Assess for signs and symptoms of respiratory problems like asthma, COPD, restrictive lung disease or refer to an appropriate specialist
+
+```{r}
+binary_adh %>% 
+  group_by(assessresp_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### reproriskasses_ng - Conduct reproductive risk assessment, educational and health promotion counseling or refer to specialist for women and men of childbearing age or refer to an appropriate specialist 
+
+```{r}
+binary_adh %>% 
+  group_by(reproriskasses_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### adultscdscreen_ng - Refer male and female partners for sickle cell screening 
+
+```{r}
+binary_adh %>% 
+  group_by(adultscdscreen_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### assessavn_ng - Screen all individuals with SCD and intermittent or chronic hip pain for avascular necrosis (history, physical exam, imaging) 
+
+```{r}
+binary_adh %>% 
+  group_by(assessavn_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### pregtransfuse_ng - Screen women who have been transfused and are pregnant for red cell alloantibodies 
+
+```{r}
+binary_adh %>% 
+  group_by(pregtransfuse_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### assesssleepbreath_ng - Assess for signs and symptoms of sleep-disordered breathing like sleep apnea or refer to an appropriate specialist 
+
+```{r}
+binary_adh %>% 
+  group_by(assesssleepbreath_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### specialist_ng - Refer to appropriate specialist for specific disease complication or co-morbidity treatment
+
+```{r}
+binary_adh %>% 
+  group_by(specialist_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+
+
+
+
+
+
