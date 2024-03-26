@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(psych)
 ```
 # Importing datasets
 
@@ -256,207 +257,49 @@ pop_red <- SCDKAPa1 %>% # Redflag attitude
 pop_red
 ```
 
-## Calculating median/IQR for attitude variables grouping by Practice location
 
-__Primary__
+## Calculating median/IQR for attitude variables grouping by number of patients seen 
+
+(1) 0-5, (2) 6-10, (3) 10-15, (4) 16-20, (5) 20 or more
+
 
 ```{r}
-
-location_number1 <- SCDKAPa1 %>% 
-  group_by(practice_location_ng___1) %>% 
+ptseen_number <- SCDKAPa1 %>% 
+  group_by(numscdpt_ng) %>% 
   count()
-location_number1
+ptseen_number
 
-loc1_pos <- SCDKAPa1 %>% # Positive attitude
-  group_by(practice_location_ng___1) %>% 
+ptseen_pos <- SCDKAPa1 %>% # Positive attitude
+  group_by(numscdpt_ng) %>% 
   summarise(median(sum_positive_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
-loc1_pos
+ptseen_pos
 
 
-loc1_neg <- SCDKAPa1 %>% # Negative attitude
-  group_by(practice_location_ng___1) %>% 
+ptseen_neg <- SCDKAPa1 %>% # Negative attitude
+  group_by(numscdpt_ng) %>% 
   summarise(median(sum_negative_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
-loc1_neg
+ptseen_neg
 
 
-loc1_con <- SCDKAPa1 %>% # Concerns attitude
-  group_by(practice_location_ng___1) %>% 
+ptseen_con <- SCDKAPa1 %>% # Concerns attitude
+  group_by(numscdpt_ng) %>% 
   summarise(median(sum_concerns_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
-loc1_con
+ptseen_con
 
-loc1_red <- SCDKAPa1 %>% # Redflag attitude
-  group_by(practice_location_ng___1) %>% 
+ptseen_red <- SCDKAPa1 %>% # Redflag attitude
+  group_by(numscdpt_ng) %>% 
   summarise(median(sum_redflag_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
-loc1_red
+ptseen_red
 ```
 
-__Secondary__
-
-```{r}
-
-location_number2 <- SCDKAPa1 %>% 
-  group_by(practice_location_ng___2) %>% 
-  count()
-location_number2
-
-
-loc2_pos <- SCDKAPa1 %>% # Positive attitude
-  group_by(practice_location_ng___2) %>% 
-  summarise(median(sum_positive_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
-loc2_pos
-
-loc2_neg <- SCDKAPa1 %>% # Negative attitude
-  group_by(practice_location_ng___2) %>% 
-  summarise(median(sum_negative_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
-loc2_neg
-
-
-loc2_con <- SCDKAPa1 %>% # Concerns attitude
-  group_by(practice_location_ng___2) %>% 
-  summarise(median(sum_concerns_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
-loc2_con
-
-loc2_red <- SCDKAPa1 %>% # Redflag attitude
-  group_by(practice_location_ng___2) %>% 
-  summarise(median(sum_redflag_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
-loc2_red
-```
-
-
-__Tertiary__ 
-
-```{r}
-
-location_number3 <- SCDKAPa1 %>% 
-  group_by(practice_location_ng___3) %>% 
-  count()
-location_number3
-
-loc3_pos <- SCDKAPa1 %>% # Positive attitude
-  group_by(practice_location_ng___3) %>% 
-  summarise(median(sum_positive_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
-loc3_pos
-
-loc3_neg <- SCDKAPa1 %>% # Negative attitude
-  group_by(practice_location_ng___3) %>% 
-  summarise(median(sum_negative_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
-loc3_neg
-
-
-loc3_con <- SCDKAPa1 %>% # Concerns attitude
-  group_by(practice_location_ng___3) %>% 
-  summarise(median(sum_concerns_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
-loc3_con
-
-loc3_red <- SCDKAPa1 %>% # Redflag attitude
-  group_by(practice_location_ng___3) %>% 
-  summarise(median(sum_redflag_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
-loc3_red
-```
-
-__Private Healthcare__
-
-```{r}
-
-location_number4 <- SCDKAPa1 %>% 
-  group_by(practice_location_ng___4) %>% 
-  count()
-location_number4
-
-
-loc4_pos <- SCDKAPa1 %>% # Positive attitude
-  group_by(practice_location_ng___4) %>% 
-  summarise(median(sum_positive_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
-loc4_pos
-
-loc4_neg <- SCDKAPa1 %>% # Negative attitude
-  group_by(practice_location_ng___4) %>% 
-  summarise(median(sum_negative_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
-loc4_neg
-
-
-loc4_con <- SCDKAPa1 %>% # Concerns attitude
-  group_by(practice_location_ng___4) %>% 
-  summarise(median(sum_concerns_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
-loc4_con
-
-loc4_red <- SCDKAPa1 %>% # Redflag attitude
-  group_by(practice_location_ng___4) %>% 
-  summarise(median(sum_redflag_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
-loc4_red
-```
-
-__Other__
-
-```{r}
-
-location_number5 <- SCDKAPa1 %>% 
-  group_by(practice_location_ng___5) %>% 
-  count()
-location_number5
-
-
-loc5_pos <- SCDKAPa1 %>% # Positive attitude
-  group_by(practice_location_ng___5) %>% 
-  summarise(median(sum_positive_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
-loc5_pos
-
-loc5_neg <- SCDKAPa1 %>% # Negative attitude
-  group_by(practice_location_ng___5) %>% 
-  summarise(median(sum_negative_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
-loc5_neg
-
-
-loc5_con <- SCDKAPa1 %>% # Concerns attitude
-  group_by(practice_location_ng___5) %>% 
-  summarise(median(sum_concerns_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
-loc5_con
-
-loc5_red <- SCDKAPa1 %>% # Redflag attitude
-  group_by(practice_location_ng___5) %>% 
-  summarise(median(sum_redflag_l, na.rm = TRUE),
-            quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
-            quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
-loc5_red
-```
 
 # Kruskal Wallis test by using total sum of all variables attirbuting to one specific attitude if we decide data is __not__ normally distributed.
 
@@ -477,7 +320,7 @@ library(dunn.test)
 ```
  
  
- ## Comparison of attitudes stratified by profession (Nurse | Physician | Other)
+## Comparison of attitudes stratified by profession (Nurse | Physician | Other)
  
 ```{r}
 
@@ -492,7 +335,7 @@ kruskal.test(sum_redflag_l ~ profession_ng_up, data = SCDKAPa1)
 ```
  
  
- ## Comparison of attitudes stratified by patient population (Adults | Paeds | Both)
+## Comparison of attitudes stratified by patient population (Adults | Paeds | Both)
  
 ```{r}
 kruskal.test(sum_positive_l ~ patient_pop_ng, data = SCDKAPa1)
@@ -513,68 +356,20 @@ dunn.test(SCDKAPa1$sum_concerns_l, g = SCDKAPa1$patient_pop_ng, method = "bonfer
 
 dunn.test(SCDKAPa1$sum_redflag_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
 ```
- 
- 
-# Comparison of attitudes stratified by practice location (primary | secondary | tertiray | private | other)
 
-## Need to discuss with Statistician how we can analyse this data because the data under practice location are not mutually exclusive.
+## Comparison of attitudes stratified by number of patients seen (0-5 | 6-10 | 10-15 | 16-20 | 20 or more)
  
 ```{r}
-#kruskal.test(sum_positive ~ , data = sum_all_var)
+kruskal.test(sum_positive_l ~ numscdpt_ng, data = SCDKAPa1)
 
-#kruskal.test(sum_negative ~ , data = sum_all_var)
+kruskal.test(sum_negative_l ~ numscdpt_ng, data = SCDKAPa1)
 
-#kruskal.test(sum_concerns ~ , data = sum_all_var)
+kruskal.test(sum_concerns_l ~ numscdpt_ng, data = SCDKAPa1)
 
-#kruskal.test(sum_redflag ~ , data = sum_all_var)
+kruskal.test(sum_redflag_l ~ numscdpt_ng, data = SCDKAPa1)
 ```
  
- 
-# Cronbach's alpha test for survey questionnaire 
 
-1. Install package "psych"
-2. run library(psych)
-
-```{r}
-library(psych)
-```
-
-
-* For positive attitude variables
-
-```{r}
-alpha_pos <- SCDKAPa1 %>% 
-  select(gladmed_ng, friends_ng, satiscare_ng, empathy_ng)
-
-alpha(alpha_pos, na.rm = TRUE)
-```
-
-* For negative attitude variables
-
-```{r}
-alpha_neg <- SCDKAPa1 %>% 
-  select(overreport_ng, failtocom_ng, abusedrugs_ng, manipu_ng, drugseek_ng, frustrate_ng)
-
-alpha(alpha_neg, na.rm = TRUE)
-```
-
-* For concerns raising behaviors variables
-
-```{r}
-alpha_con <- SCDKAPa1 %>% 
-  select(reqnarc_ng, comfort_ng, disputestaff_ng, ringsbell_ng)
-
-alpha(alpha_con, na.rm = TRUE)
-```
-
-* For red-flag behaviors variables
-
-```{r}
-alpha_red <- SCDKAPa1 %>% 
-  select(changebehav_ng, signout2_ng, tamperpca_ng)
-
-alpha(alpha_red, na.rm = TRUE)
-```
 
 
 
