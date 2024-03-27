@@ -1218,3 +1218,159 @@ Othermedication <- SCDKAPa1 %>%
 
 print(Othermedication)
 ```
+
+## Create new categories for other responses ##
+Create new variable summarizing categories discussed in other text, which have significant numbers:
+
+1. Pentazocine
+```{r}
+# Vector of record_ids want to code as 1 (N = 42) - reported pentazocine in other text box for "otheropiate_ng_v2"
+pentazocine_used_inotherop <- c(1, 7, 10, 16, 27, 29, 42, 45, 51, 60, 61, 64, 86, 127, 151, 186, 220, 222, 223, 225, 238, 284, 293, 297, 299, 335, 350, 352, 376, 382, 386, 388,399,400,423,438,458,466,474, 510, 518, 529)  # included all record_ids that noted pentazocine as another medication they used in practice
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$pentazocine_po_ng_v2 <- ifelse(SCDKAPa1$record_id %in% pentazocine_used_inotherop, 1, 0)
+
+# Filter the data frame
+freqeuncy_pentazocine <- SCDKAPa1 %>% #37
+  filter(pentazocine_po_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(otheropiate_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  summarise(count_1 = sum(otheropiate_ng_v2 == 1),
+            count_2 = sum(otheropiate_ng_v2 == 2),
+            count_3 = sum(otheropiate_ng_v2 == 3),
+            count_4 = sum(otheropiate_ng_v2 == 4))
+
+freqeuncy_pentazocine
+
+## ADD TWO VALUES ##
+
+# Vector of record_ids want to code as 1 (N = 10) - - reported pentazocine in other text box for "othernsaids_surv_ng_v2"
+pentazocine_used_inothernsaid<-c(193, 194, 204, 208, 209, 328, 347, 364, 424, 467)
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$pentazocine_po_ng_v2 <- ifelse(SCDKAPa1$record_id %in% pentazocine_used_inothernsaid, 1, 0)
+
+# Filter the data frame
+freqeuncy_pentazocine <- SCDKAPa1 %>% # 32
+  filter(pentazocine_po_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(othernsaids_surv_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  summarise(count_2 = sum(othernsaids_surv_ng_v2 == 2),
+            count_3 = sum(othernsaids_surv_ng_v2 == 3),
+            count_4 = sum(othernsaids_surv_ng_v2 == 4))
+
+freqeuncy_pentazocine
+```
+
+2. Chlopheniramine / Piriton
+```{r}
+# Vector of record_ids want to code as 1 (N = 27) - reported Chlopheniramine / Piriton in other text box for "otherantihist_ng_v2"
+piriton_inotheranti <- c(27, 101, 186, 304, 304, 333, 344, 400, 423, 7, 63, 151, 166, 217, 195, 220, 250, 293, 310, 328, 293, 310, 328, 332, 362, 424, 500)  # included all record_ids that noted Chlopheniramine / Piriton as another medication they used in practice
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$piriton_po_ng_v2 <- ifelse(SCDKAPa1$record_id %in% piriton_inotheranti, 1, 0)
+
+#Double check dataset ensuring sample size of n = 30
+piriton_responses <- filter(SCDKAPa1, piriton_po_ng_v2 == 1)
+piritonandotherresponse <- loratidine_responses[, c("piriton_po_ng_v2", "otherantihist_ng_v2")]
+print(piritonandotherresponse)
+
+# Filter the data frame
+freqeuncy_piriton <- SCDKAPa1 %>% #37
+  filter(piriton_po_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(otherantihist_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  summarise(count_1 = sum(otherantihist_ng_v2 == 1),
+            count_2 = sum(otherantihist_ng_v2 == 2),
+            count_3 = sum(otherantihist_ng_v2 == 3),
+            count_4 = sum(otherantihist_ng_v2 == 4))
+
+freqeuncy_piriton
+```
+
+3. Loratidine
+```{r}
+# Vector of record_ids want to code as 1 (N = 30) - reported Chlopheniramine / Piriton in other text box for "otherantihist_ng_v2"
+loratidine_inotheranti <- c(25, 34, 145, 147, 151, 170, 191, 194, 195, 214, 268, 291, 314, 322, 328, 314, 322, 328, 352, 370, 374, 376, 382, 388, 399, 458, 463, 467, 482, 504, 519, 530, 531)  # included all record_ids that noted Chlopheniramine / Piriton as another medication they used in practice
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$loratidine_po_ng_v2 <- ifelse(SCDKAPa1$record_id %in% loratidine_inotheranti, 1, 0)
+
+#Double check dataset ensuring sample size of n = 30
+loratidine_responses <- filter(SCDKAPa1, loratidine_po_ng_v2 == 1)
+loratidineandotherresponse <- loratidine_responses[, c("loratidine_po_ng_v2", "otherantihist_ng_v2")]
+print(loratidineandotherresponse)
+
+# Filter the data frame
+freqeuncy_loratidine <- SCDKAPa1 %>% #37
+  filter(loratidine_po_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(otherantihist_ng_v2 %in% c(1, 2, 3, 4)) %>%
+  summarise(count_1 = sum(otherantihist_ng_v2 == 1),
+            count_2 = sum(otherantihist_ng_v2 == 2),
+            count_3 = sum(otherantihist_ng_v2 == 3),
+            count_4 = sum(otherantihist_ng_v2 == 4))
+
+freqeuncy_loratidine
+```
+
+4. Diclofenac
+```{r}
+# Vector of record_ids want to code as 1 (N = 73) - reported Diclofenac in other text box for "othernsaids_surv_ng_v2"
+diclofenac_inothernsaid <- c(1, 7, 8, 10, 12, 16, 25, 27, 32, 33, 34, 37, 43, 45, 47, 51, 54, 55, 61, 63, 64, 101, 136, 142, 145, 151, 161, 166, 186, 195, 199, 222, 223, 232, 238, 304, 310, 313, 328, 333, 350, 352, 359, 370, 376, 379, 382,385, 386, 388, 399, 400, 417, 423, 428, 438, 460, 461, 463, 466, 474, 481,490, 493, 508, 510, 522, 530)  # included all record_ids that noted Diclofenac as another medication they used in practice
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$diclofenac_po_ng_v2 <- ifelse(SCDKAPa1$record_id %in% diclofenac_inothernsaid, 1, 0)
+
+# Filter the data frame
+freqeuncy_diclofenac <- SCDKAPa1 %>% #37
+  filter(diclofenac_po_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(othernsaids_surv_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(othernsaids_surv_ng_v2 == 2),
+            count_3 = sum(othernsaids_surv_ng_v2 == 3),
+            count_4 = sum(othernsaids_surv_ng_v2 == 4))
+
+freqeuncy_diclofenac
+
+## ADD TWO VALUES ##
+
+# Vector of record_ids want to code as 1 (N = 73) - reported Diclofenac in other text box for "other_med_ng_v2"
+diclofenac_inothermed <- c(395, 398, 407, 346, 316)  # included all record_ids that noted Diclofenac as another medication they used in practice
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$diclofenac_po_ng_v2 <- ifelse(SCDKAPa1$record_id %in% diclofenac_inothermed, 1, 0)
+
+# Filter the data frame
+freqeuncy_diclofenac <- SCDKAPa1 %>% #37
+  filter(diclofenac_po_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(othermed_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(othermed_ng_v2 == 2),
+            count_3 = sum(othermed_ng_v2 == 3),
+            count_4 = sum(othermed_ng_v2 == 4))
+
+freqeuncy_diclofenac
+```
+
+Vitamins (e.g., Multivitamin, Folic Acid, Haemantinics)
+```{r}
+# Vector of record_ids want to code as 1 (N = 20) - reported Diclofenac in other text box for "other_med_ng_v2"
+vitamins_inothermed <- c(508, 1, 176, 64, 145, 194, 199, 204, 223, 232, 352, 438, 474, 481, 482, 492, 530, 531, 250, 518)  # included all record_ids that noted Diclofenac as another medication they used in practice
+
+# Create a new variable where individuals with specific record_ids are coded as 1
+SCDKAPa1$vitamins_ng_v2 <- ifelse(SCDKAPa1$record_id %in% vitamins_inothermed, 1, 0)
+
+# Filter the data frame
+freqeuncy_vitamins <- SCDKAPa1 %>% #37
+  filter(vitamins_ng_v2 == 1) %>%
+  group_by(profession_ng_up) %>%
+  filter(othermed_ng_v2 %in% c(2, 3, 4)) %>%
+  summarise(count_2 = sum(othermed_ng_v2 == 2),
+            count_3 = sum(othermed_ng_v2 == 3),
+            count_4 = sum(othermed_ng_v2 == 4))
+
+freqeuncy_vitamins
+```
+
+
