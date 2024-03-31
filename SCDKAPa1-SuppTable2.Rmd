@@ -1,0 +1,346 @@
+---
+title: "Supple_table 2_EXTENDaim1"
+author: "Wai"
+date: "2024-02-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+# Importing datasets
+
+## This dataset "data/SCDKAPAim1.csv" is an clean one dated Feb 9,2024, created by Kirstin. 
+## Changes by March 19, 2024: Feb_20_2024_SCDKAPAim1 is the updated dataset that includes all required variables. Hence, this dataset will be used for the following data analysis. Previously, left_join function was used to join the datasets but it will not be applied anymore.
+
+```{r}
+SCDKAPa1 <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
+```
+## This dataset "data/SCDKAPAll.csv" is downloaded by Dr. Ibemere to add addtional variables, particularly (other_ng and other_fluid_ng) to the above dataset. 
+
+```{r}
+#SCDKAPAll <- read_csv("data/SCDKAPAll.csv") #this dataset "Feb_20_2024_SCDKAPAim1.csv" already joined the required variables.
+```
+# Joining dataset for other_ng and other_fluid_ng variables
+
+## First, will narrow down the variabbles (other_ng and other_fluid_ng) from overall dataset
+
+```{r}
+
+#SCDKAPAll_2 <- SCDKAPAll %>% 
+  #select(record_id, other_ng, other_fluid_ng)
+```
+
+## Second, join the dataset by using left_join function
+
+```{r}
+#SCDKAPAim1_tbl2 <- SCDKAPAim1 %>% 
+  #left_join(SCDKAPAll_2, join_by(record_id))
+```
+
+## Third, integrating some observations of other_ng + other_fluid_ng to respective main category
+
+* 5% dextrose water at 1.5 maintenance to Isotonic Crystalloid at maintenance rate as suggested by Dr. Ibemere
+
+
+```{r}
+SCDKAPa1 %>% 
+  select(record_id, isocrysmain_ng, other_ng) %>% 
+  filter(record_id %in% c(26, 43, 54, 417, 225))
+```
+
+* observation 225 responded in both variables (isocrysmain_ng and other_ng) and hence, we will use both responses in calculation of percentage for each variable
+
+
+### Integrating values of selected observations from other_ng to isocrysmain_ng and then create updated dataset
+
+```{r}
+SCDKAPa1 <- SCDKAPa1 %>%
+  mutate(
+    isocrysmain_ng = ifelse(record_id %in% c(26, 43, 54, 417), other_ng, isocrysmain_ng),
+    other_ng = ifelse(record_id %in% c(26, 43, 54, 417), NA, other_ng)
+  )
+```
+
+### checking the integration is functional or not
+
+```{r}
+SCDKAPa1 %>%
+  filter(record_id %in% c(26, 43, 54, 417, 225)) %>% 
+  select(isocrysmain_ng, other_ng)
+```
+
+Now we got new dataset for all variables that we need for supplementary table 2.
+
+
+# Calculating for supplementary table (2) EXTEND Aim 1: Healthcare Provider Choice of Fluid and Frequency of Use for the Treatment of SCD Pain 
+
+## Frequency category: (1) Never, (2) Rarely, (3) Frequently, (4) Always
+
+### Isotonic Crystalloid Bolus
+
+```{r}
+isocrysbol_ng1 <- SCDKAPa1 %>% 
+  filter(isocrysbol_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, isocrysbol_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[isocrysbol_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[isocrysbol_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1), 
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(isocrysbol_ng %in% c(1, 2, 3, 4))
+ 
+print(isocrysbol_ng1) 
+  
+```
+
+```{r}
+
+isocrysbol_ng2 <- SCDKAPa1 %>% 
+  filter(isocrysbol_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(isocrysbol_ng == 2), 
+            count_3 = sum(isocrysbol_ng == 3), 
+            count_4 = sum(isocrysbol_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 186 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1), 
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+isocrysbol_ng2
+```
+
+### Isotonic Crystalloid at maintenance rate 
+
+```{r}
+isocrysmain_ng1 <- SCDKAPa1 %>% 
+  filter(isocrysmain_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, isocrysmain_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[isocrysmain_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[isocrysmain_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1), 
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(isocrysmain_ng %in% c(1, 2, 3, 4)) 
+ 
+print(isocrysmain_ng1) 
+
+```
+
+```{r}
+isocrysmain_ng2 <- SCDKAPa1 %>% 
+  filter(isocrysmain_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(isocrysmain_ng == 2), 
+            count_3 = sum(isocrysmain_ng == 3), 
+            count_4 = sum(isocrysmain_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 173 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1),
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+isocrysmain_ng2
+```
+
+### Isotonic Crystalloid at half-maintenance rate 
+
+```{r}
+isocysthalf_ng1 <- SCDKAPa1 %>% 
+  filter(isocysthalf_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, isocysthalf_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[isocysthalf_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[isocysthalf_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1), 
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(isocysthalf_ng %in% c(1, 2, 3, 4)) 
+ 
+print(isocysthalf_ng1) 
+```
+
+```{r}
+isocysthalf_ng2 <- SCDKAPa1 %>% 
+  filter(isocysthalf_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(isocysthalf_ng == 2), 
+            count_3 = sum(isocysthalf_ng == 3), 
+            count_4 = sum(isocysthalf_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 152 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1), 
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+isocysthalf_ng2
+```
+
+### Hypotonic fluid at maintenance rate 
+
+```{r}
+hypomain_ng1 <- SCDKAPa1 %>% 
+  filter(hypomain_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, hypomain_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[hypomain_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[hypomain_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1), 
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(hypomain_ng %in% c(1, 2, 3, 4)) 
+ 
+print(hypomain_ng1) 
+```
+
+```{r}
+hypomain_ng2 <- SCDKAPa1 %>% 
+  filter(hypomain_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(hypomain_ng == 2), 
+            count_3 = sum(hypomain_ng == 3), 
+            count_4 = sum(hypomain_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 171 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1),
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+hypomain_ng2
+```
+
+### Hypotonic fluid at half-maintenance rate 
+
+```{r}
+hypohalf_ng1 <- SCDKAPa1 %>% 
+  filter(hypohalf_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, hypohalf_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[hypohalf_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[hypohalf_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1), 
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(hypohalf_ng %in% c(1, 2, 3, 4)) 
+ 
+print(hypohalf_ng1) 
+```
+
+```{r}
+hypohalf_ng2 <- SCDKAPa1 %>% 
+  filter(hypohalf_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(hypohalf_ng == 2), 
+            count_3 = sum(hypohalf_ng == 3), 
+            count_4 = sum(hypohalf_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 156 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1),
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+hypohalf_ng2
+```
+
+### Oral hydration (e.g. water and/or ORS by mouth) 
+
+```{r}
+oralhydra_ng1 <- SCDKAPa1 %>% 
+  filter(oralhydra_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, oralhydra_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[oralhydra_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[oralhydra_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1), 
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(oralhydra_ng %in% c(1, 2, 3, 4)) 
+ 
+print(oralhydra_ng1) 
+```
+
+```{r}
+oralhydra_ng2 <- SCDKAPa1 %>% 
+  filter(oralhydra_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(oralhydra_ng == 2), 
+            count_3 = sum(oralhydra_ng == 3), 
+            count_4 = sum(oralhydra_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 184 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1), 
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+oralhydra_ng2
+```
+
+### Other 
+
+```{r}
+other_ng1 <- SCDKAPa1 %>% 
+  filter(other_ng %in% c(1, 2, 3, 4)) %>% 
+  group_by(profession_ng_up, other_ng) %>% 
+  summarise(count = n(), .groups = 'drop') %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(percent = round(count / total * 100,1)) %>% 
+  mutate(totalreportinguse = sum(count[other_ng %in% c(2, 3, 4)]), 
+       totalnouse = sum(count[other_ng == 1]), 
+       totalpart = sum(count), 
+       percentwuse = round(totalreportinguse / totalpart * 100,1),
+       percentwoutuse = round(totalnouse / totalpart * 100,1)) %>% 
+  filter(other_ng %in% c(1, 2, 3, 4)) 
+ 
+print(other_ng1) 
+```
+
+```{r}
+other_ng2 <- SCDKAPa1 %>% 
+  filter(other_ng %in% c(2, 3, 4)) %>% 
+  summarise(count_2 = sum(other_ng == 2), 
+            count_3 = sum(other_ng == 3), 
+            count_4 = sum(other_ng == 4), 
+            total_participants = n()) %>% 
+  mutate(total_percent = round((count_2 + count_3 + count_4) / 67 * 100,1), 
+         percent_2 = round(count_2 / total_participants * 100,1), 
+         percent_3 = round(count_3 / total_participants * 100,1), 
+         percent_4 = round(count_4 / total_participants * 100,1))
+
+other_ng2
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
