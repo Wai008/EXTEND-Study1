@@ -652,138 +652,76 @@ bpsmedian_iqr_by_tertpracloc <- SCDKAPa1 %>%
 bpsmedian_iqr_by_tertpracloc
 ```
 
-# PRIVATE #
+# PRIVATE And OTHER# 
+Edited to combine private health care category and other healthcare category
 Total Correct
 ```{r}
+# Create a new variable 'private_and_or_otherlocation'
+SCDKAPa1$private_and_or_otherlocation <- ifelse(SCDKAPa1$practice_location_ng___4 == 1 | SCDKAPa1$practice_location_ng___5 == 1, 1, 0)
+# View(SCDKAPa1)
+
 # Median and IQR for each age group - total
-totalmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___4) %>%
+totalmedian_iqr_by_private_and_or_otherlocation <- SCDKAPa1 %>%
+  group_by(private_and_or_otherlocation) %>%
   summarize(
     median_correct = median(total_percentcorrect, na.rm = TRUE),
     q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
     q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
   )
 
-totalmedian_iqr_by_privpracloc
+totalmedian_iqr_by_private_and_or_otherlocation
 
 # Confidence Intervals of Total % correct for each practice location
-ci_by_privpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___4) %>%
+ci_by_private_and_or_otherlocation <- SCDKAPa1 %>%
+  group_by(private_and_or_otherlocation) %>%
   summarize(
     ci_lower = t.test(total_percentcorrect)$conf.int[1],
     ci_upper = t.test(total_percentcorrect)$conf.int[2]
   )
 
-ci_by_privpracloc
+ci_by_private_and_or_otherlocation
 ```
 
 Complications
 ```{r}
 # Median and IQR for each age group - complications
-compmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___4) %>%
+compmedian_iqr_by_private_and_or_otherlocation <- SCDKAPa1 %>%
+  group_by(private_and_or_otherlocation) %>%
   summarize(
     median_correct = median(comp_percentcorrect, na.rm = TRUE),
     q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
     q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
   )
 
-compmedian_iqr_by_privpracloc
+compmedian_iqr_by_private_and_or_otherlocation
 ```
 
 Management
 ```{r}
 # Median and IQR for each age group - management
-managemedian_iqr_by_privpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___4) %>%
+managemedian_iqr_by_private_and_or_otherlocation <- SCDKAPa1 %>%
+  group_by(private_and_or_otherlocation) %>%
   summarize(
     median_correct = median(manage_percentcorrect, na.rm = TRUE),
     q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
     q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
   )
 
-managemedian_iqr_by_privpracloc
+managemedian_iqr_by_private_and_or_otherlocation
 ```
 
 Biopsychosocial
 ```{r}
 # Median and IQR for each age group - bps
-bpsmedian_iqr_by_privpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___4) %>%
+bpsmedian_iqr_by_private_and_or_otherlocation <- SCDKAPa1 %>%
+  group_by(private_and_or_otherlocation) %>%
   summarize(
     median_correct = median(bps_percentcorrect, na.rm = TRUE),
     q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
     q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
   )
 
-bpsmedian_iqr_by_privpracloc
-```
-
-# OTHER #
-Total Correct
-```{r}
-# Median and IQR for each age group - total
-totalmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___5) %>%
-  summarize(
-    median_correct = median(total_percentcorrect, na.rm = TRUE),
-    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
-  )
-
-totalmedian_iqr_by_othpracloc
-
-# Confidence Intervals of Total % correct for each practice location
-ci_by_othpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___5) %>%
-  summarize(
-    ci_lower = t.test(total_percentcorrect)$conf.int[1],
-    ci_upper = t.test(total_percentcorrect)$conf.int[2]
-  )
-
-ci_by_othpracloc # Negative lower CI and really high upper CI, probably due to small sample size?
-```
-
-Complications
-```{r}
-# Median and IQR for each age group - complications
-compmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___5) %>%
-  summarize(
-    median_correct = median(comp_percentcorrect, na.rm = TRUE),
-    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
-  )
-
-compmedian_iqr_by_othpracloc
-```
-
-Management
-```{r}
-# Median and IQR for each age group - management
-managemedian_iqr_by_othpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___5) %>%
-  summarize(
-    median_correct = median(manage_percentcorrect, na.rm = TRUE),
-    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
-  )
-
-managemedian_iqr_by_othpracloc
-```
-
-Biopsychosocial
-```{r}
-# Median and IQR for each age group - bps
-bpsmedian_iqr_by_othpracloc <- SCDKAPa1 %>%
-  group_by(practice_location_ng___5) %>%
-  summarize(
-    median_correct = median(bps_percentcorrect, na.rm = TRUE),
-    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
-  )
-
-bpsmedian_iqr_by_othpracloc
+bpsmedian_iqr_by_private_and_or_otherlocation
 ```
 
 5. Conduct Wilcoxon rank-sum test test to compare percent correct within groups (comparing total percent correct) because the Kruskal-Wallis test yeilded significant results across all groups. Used a Wilcoxon rank-sum test (rather than PostHoc TukeyHSD) to compare significant differences between medians within groups.
@@ -917,6 +855,37 @@ for (i in 1:(length(patpop_levels) - 1)) {
 }
 ```
 
-### PRACTICE LOCATION - WILCOXONRANKSUM ###
+
+## Determine Cronbach alphas for knowledge table ##
+```{r}
+# install.packages("psych")
+library(psych)
+```
+
+1. For Complications
+```{r}
+# Method #1
+alpha_complications <- SCDKAPa1 %>% 
+  select(patho_ng, complscdpeds_ng, acutechestpres_ng, investcause_ng, manifescdpeds_ng, hemorstroke_ng, ironover_ng, acutechronpain_ng)
+
+alpha(alpha_pos, na.rm = TRUE)
+
+# Method #2
+complication_ca <- c("patho_ng", "complscdpeds_ng", "acutechestpres_ng", 
+                         "investcause_ng", "manifescdpeds_ng", "hemorstroke_ng", 
+                         "ironover_ng", "acutechronpain_ng")
+
+assesscomplications <- SCDKAPa1[, complication_ca]
+
+alpha(assesscomplications)
+```
+
+
+
+
+
+
+
+
 
 

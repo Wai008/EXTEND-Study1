@@ -184,6 +184,43 @@ table1(~ freqabx_ng + freqstopabx_ng + freqedpneuvax_ng + freqedfever_ng + freqc
 table1(~ hurx_up + hucollab_ng + consultscd_ng + counselmiss_ng + educatescd_ng + hutherapyadult_ng + hutherapypeds_ng + disconpreg_ng + cbcwithdiff_ng + monitorcbc_ng, data = SCDKAPa1, droplevels = TRUE, overall = "Total")
 ```
 
+Stratify binary (Yes adhere versus No adhere) variables by profession type and patient population
+```{r}
+# Do you prescribe hydroxyurea to individuals with SCD who are eligible for hydroxyurea therapy?
+SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    yes = sum(hurx_up == 1),
+    no = sum(hurx_up == 0)
+  )
+
+SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    yes = sum(hurx_up == 1),
+    no = sum(hurx_up == 0)
+  )
+
+# Do you work with a hematologist/SCD expert who prescribes hydroxyurea to individuals with SCD who are eligible for hydroxyurea therapy? 
+SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  summarize(
+    yes = sum(hucollab_ng == 1),
+    no = sum(hucollab_ng == 0)
+  )
+
+SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  summarize(
+    yes = sum(hucollab_ng == 1),
+    no = sum(hucollab_ng == 0)
+  )
+```
+
+
+hurx_up
+hucollab_ng
+
 ## Table 4c. Healthcare Provider Adherence to Guideline Based Blood Transfusion Recommendations - Wai
 
 Section Header: Please indicate how frequently you (or you and your SCD expert colleague) do the following:
