@@ -12,6 +12,8 @@ Install and Load Packages
 ```{r}
 library(readr)
 library(dplyr)
+library(broom)
+library(forcats)
 ```
 
 1. Import and load data set
@@ -148,7 +150,7 @@ shapiro.test(SCDKAPa1$bps_percentcorrect)
 ```
 
 4. Calculate table values
-### POPULATION TOTAL PERCENT CORRECT ###
+### STUDY SAMPLE - TOTAL PERCENT CORRECT ###
 Total
 ```{r}
 # Median and IQR for total sample size
@@ -161,8 +163,8 @@ print(paste("Total Median:", total_median_correct))
 print(paste("Total 25% IQR:", total_q1))
 print(paste("Total 75% IQR:", total_q3))
 
-# Confidence Intervals
-t.test(SCDKAPa1$total_percentcorrect)
+# P Value using Mann Whitney
+wilcox.test(total_percentcorrect ~ 1, data = SCDKAPa1)$p.value
 ```
 
 Complications - Total
@@ -204,7 +206,21 @@ print(paste("Total 25% IQR:", total_q1))
 print(paste("Total 75% IQR:", total_q3))
 ```
 
-### BY PROFESSION ###
+### STUDY SAMPLE - 95% CI ###
+```{r}
+# Total % Correct
+result_wilcoxon <- SCDKAPa1 %>%
+  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+result_wilcoxon
+```
+
+
+### BY PROFESSION - MEDIAN AND IQR ###
 Total Correct
 ```{r}
 # Median and IQR for each group
@@ -221,16 +237,6 @@ print(totalmedian_iqr_by_group)
 
 # PValues - Perform the Kruskal-Wallis test
 kruskal.test(total_percentcorrect ~ profession_ng_up, data = SCDKAPa1)
-
-# Confidence Intervals of Total % correct for each profession category
-ci_by_professiongroup <- SCDKAPa1 %>%
-  group_by(profession_ng_up) %>%
-  summarize(
-    ci_lower = t.test(total_percentcorrect)$conf.int[1],
-    ci_upper = t.test(total_percentcorrect)$conf.int[2]
-  )
-
-ci_by_professiongroup
 ```
 
 Complications
@@ -302,7 +308,26 @@ print(paste("Total 25% IQR:", bpstotal_q1))
 print(paste("Total 75% IQR:", bpstotal_q3))
 ```
 
-### BY AGE ###
+### BY PROFESSION - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
+```{r}
+# Total % Correct
+result_wilcoxon <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>%
+  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+result_wilcoxon
+```
+
+### BY PROFESSION - PAIRWISE COMPARISONS USING DUNNS ###
+```{r}
+dunn.test(SCDKAPa1$total_percentcorrect, g = SCDKAPa1$profession_ng_up, method = "bonferroni")
+```
+
+### BY AGE - MEDIAN AND IQR###
 Total Correct
 ```{r}
 # Re-categorize age group
@@ -380,7 +405,64 @@ bpsmedian_iqr_by_age <- SCDKAPa1 %>%
 bpsmedian_iqr_by_age
 ```
 
-### BY PATIENT POPULATION ###
+### BY AGE - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
+```{r}
+# Total % Correct
+result_wilcoxon <- SCDKAPa1 %>%
+  group_by(age_ng) %>%
+  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+result_wilcoxon
+```
+
+### BY AGE - PAIRWISE COMPARISONS USING WILCOXONRANKSUM ###
+```{r}
+# Create pairwise comparisons between levels of "age_ng"
+age_levels <- unique(SCDKAPa1$age_ng)
+
+# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
+for (i in 1:(length(age_levels) - 1)) {
+  for (j in (i + 1):length(age_levels)) {
+    age_group1 <- age_levels[i]
+    age_group2 <- age_levels[j]
+    
+    # Subset data for the two groups
+    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$age_ng == age_group1]
+    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$age_ng == age_group2]
+    
+    # Check if the groups are not empty
+    if (length(group1) == 0 | length(group2) == 0) {
+      cat("Warning: One or more groups is empty.\n")
+      next  # Skip to the next iteration if one or more groups is empty
+    }
+    
+    # Perform Wilcoxon rank-sum test
+    test_result <- wilcox.test(group1, group2)
+    
+    # Calculate medians
+    median_group1 <- median(group1, na.rm = TRUE)
+    median_group2 <- median(group2, na.rm = TRUE)
+    
+    # Check for NA values in medians
+    if (is.na(median_group1) | is.na(median_group2)) {
+      cat("Warning: One or more medians is NA.\n")
+      next  # Skip to the next iteration if one or more medians is NA
+    }
+    
+    # Print the results
+    cat("Comparison between", age_group1, "and", age_group2, ":\n")
+    cat("Median difference:", median_group1 - median_group2, "\n")
+    print(test_result)
+    cat("\n")
+  }
+}
+```
+
+### BY PATIENT POPULATION - MEDIAN AND IQR###
 Total Correct
 ```{r}
 # Median and IQR for each age group - total
@@ -449,6 +531,176 @@ bpsmedian_iqr_by_patpop <- SCDKAPa1 %>%
 
 bpsmedian_iqr_by_patpop
 ```
+
+### BY PATIENT POPULATION - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
+```{r}
+# Total % Correct
+result_wilcoxon <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>%
+  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+result_wilcoxon
+```
+
+### BY PATIENT POPULATION - PAIRWISE COMPARISONS USING DUNNS TEST ###
+```{r}
+dunn.test(SCDKAPa1$total_percentcorrect, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
+```
+
+
+### BY NUMBER OF PATIENTS SEEN / WEEK - MEDIAN AND IQR###
+Create new variable to recode number of patients seen into binary variable
+```{r}
+SCDKAPa1 <- SCDKAPa1 %>%
+  dplyr::mutate(
+    numscdpt_ng_up = case_when(
+      numscdpt_ng == "1" ~ 1,                       # If numscdpt_ng is "1 (0 - 5)", code as 1
+      as.logical(numscdpt_ng %in% 2:5) ~ 2         # If numscdpt_ng is in range 2 to 5, code as 2
+    )
+  )
+
+SCDKAPa1$numscdpt_ng_up <- as.factor(SCDKAPa1$numscdpt_ng_up)
+```
+
+Total Correct
+```{r}
+# Median and IQR for each age group - total
+totalmedian_iqr_by_numscdpt <- SCDKAPa1 %>%
+  group_by(numscdpt_ng_up) %>%
+  summarize(
+    median_correct = median(total_percentcorrect, na.rm = TRUE),
+    q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+totalmedian_iqr_by_numscdpt
+
+# PValues - Perform the Kruskal-Wallis test
+kruskal.test(total_percentcorrect ~ numscdpt_ng_up, data = SCDKAPa1)
+
+# Confidence Intervals of Total % correct for each patient population
+
+```
+
+Complications
+```{r}
+# Median and IQR for each age group - complications
+compmedian_iqr_by_numscdpt <- SCDKAPa1 %>%
+  group_by(numscdpt_ng_up) %>%
+  summarize(
+    median_correct = median(comp_percentcorrect, na.rm = TRUE),
+    q1 = quantile(comp_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(comp_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+compmedian_iqr_by_numscdpt
+```
+
+Management
+```{r}
+# Median and IQR for each age group - management
+managemedian_iqr_by_numscdpt <- SCDKAPa1 %>%
+  group_by(numscdpt_ng_up) %>%
+  summarize(
+    median_correct = median(manage_percentcorrect, na.rm = TRUE),
+    q1 = quantile(manage_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(manage_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+managemedian_iqr_by_numscdpt
+```
+
+Biopsychosocial
+```{r}
+# Median and IQR for each age group - bps
+bpsmedian_iqr_by_numscdpt <- SCDKAPa1 %>%
+  group_by(numscdpt_ng_up) %>%
+  summarize(
+    median_correct = median(bps_percentcorrect, na.rm = TRUE),
+    q1 = quantile(bps_percentcorrect, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(bps_percentcorrect, probs = 0.75, na.rm = TRUE)
+  )
+
+bpsmedian_iqr_by_numscdpt
+```
+
+### BY NUMBER OF PATIENTS SEEM / WEEK - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
+```{r}
+# Total % Correct
+result_wilcoxon <- SCDKAPa1 %>%
+  group_by(numscdpt_ng_up) %>%
+  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+result_wilcoxon
+```
+
+### BY NUMBER OF PATIENTS SEEM / WEEK - PAIRWISE COMPARISONS USING WILCOXON ###
+```{r}
+# Create pairwise comparisons between levels of "age_ng"
+numscdpt_levels <- unique(SCDKAPa1$numscdpt_ng_up)
+
+# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
+for (i in 1:(length(numscdpt_levels) - 1)) {
+  for (j in (i + 1):length(numscdpt_levels)) {
+    numscdpt_group1 <- numscdpt_levels[i]
+    numscdpt_group2 <- numscdpt_levels[j]
+    
+    # Subset data for the two groups
+    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$numscdpt_ng_up == numscdpt_group1]
+    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$numscdpt_ng_up == numscdpt_group2]
+    
+    # Check if the groups are not empty
+    if (length(group1) == 0 | length(group2) == 0) {
+      cat("Warning: One or more groups is empty.\n")
+      next  # Skip to the next iteration if one or more groups is empty
+    }
+    
+    # Perform Wilcoxon rank-sum test
+    test_result <- wilcox.test(group1, group2)
+    
+    # Calculate medians
+    median_group1 <- median(group1, na.rm = TRUE)
+    median_group2 <- median(group2, na.rm = TRUE)
+    
+    # Check for NA values in medians
+    if (is.na(median_group1) | is.na(median_group2)) {
+      cat("Warning: One or more medians is NA.\n")
+      next  # Skip to the next iteration if one or more medians is NA
+    }
+    
+    # Print the results
+    cat("Comparison between", numscdpt_group1, "and", numscdpt_group2, ":\n")
+    cat("Median difference:", median_group1 - median_group2, "\n")
+    print(test_result)
+    cat("\n")
+  }
+}
+```
+
+
+## CRONBACH ALPHA FOR INTERNAL CONSISTENCY OF KNOWLEDGE-TYPE QUESTIONS: COMP, MANAG, BIOPSY ##
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ended up not including Practice Location in the final table 2.
 
 ### BY PRACTICE LOCATION ###
 # PRIMARY #
@@ -724,161 +976,19 @@ bpsmedian_iqr_by_private_and_or_otherlocation <- SCDKAPa1 %>%
 bpsmedian_iqr_by_private_and_or_otherlocation
 ```
 
-5. Conduct Wilcoxon rank-sum test test to compare percent correct within groups (comparing total percent correct) because the Kruskal-Wallis test yeilded significant results across all groups. Used a Wilcoxon rank-sum test (rather than PostHoc TukeyHSD) to compare significant differences between medians within groups.
-### AGE - WILCOXONRANKSUM ###
-```{r}
-# Create pairwise comparisons between levels of "age_ng"
-age_levels <- unique(SCDKAPa1$age_ng)
 
-# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
-for (i in 1:(length(age_levels) - 1)) {
-  for (j in (i + 1):length(age_levels)) {
-    age_group1 <- age_levels[i]
-    age_group2 <- age_levels[j]
-    
-    # Subset data for the two groups
-    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$age_ng == age_group1]
-    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$age_ng == age_group2]
-    
-    # Check if the groups are not empty
-    if (length(group1) == 0 | length(group2) == 0) {
-      cat("Warning: One or more groups is empty.\n")
-      next  # Skip to the next iteration if one or more groups is empty
-    }
-    
-    # Perform Wilcoxon rank-sum test
-    test_result <- wilcox.test(group1, group2)
-    
-    # Calculate medians
-    median_group1 <- median(group1, na.rm = TRUE)
-    median_group2 <- median(group2, na.rm = TRUE)
-    
-    # Check for NA values in medians
-    if (is.na(median_group1) | is.na(median_group2)) {
-      cat("Warning: One or more medians is NA.\n")
-      next  # Skip to the next iteration if one or more medians is NA
-    }
-    
-    # Print the results
-    cat("Comparison between", age_group1, "and", age_group2, ":\n")
-    cat("Median difference:", median_group1 - median_group2, "\n")
-    print(test_result)
-    cat("\n")
-  }
-}
-```
-
-### PROFESSION - WILCOXONRANKSUM ###
-```{r}
-# Create pairwise comparisons between levels of "age_ng"
-profession_levels <- unique(SCDKAPa1$profession_ng_up)
-
-# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
-for (i in 1:(length(profession_levels) - 1)) {
-  for (j in (i + 1):length(profession_levels)) {
-    profession_group1 <- profession_levels[i]
-    profession_group2 <- profession_levels[j]
-    
-    # Subset data for the two groups
-    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$profession_ng_up == profession_group1]
-    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$profession_ng_up == profession_group2]
-    
-    # Check if the groups are not empty
-    if (length(group1) == 0 | length(group2) == 0) {
-      cat("Warning: One or more groups is empty.\n")
-      next  # Skip to the next iteration if one or more groups is empty
-    }
-    
-    # Perform Wilcoxon rank-sum test
-    test_result <- wilcox.test(group1, group2)
-    
-    # Calculate medians
-    median_group1 <- median(group1, na.rm = TRUE)
-    median_group2 <- median(group2, na.rm = TRUE)
-    
-    # Check for NA values in medians
-    if (is.na(median_group1) | is.na(median_group2)) {
-      cat("Warning: One or more medians is NA.\n")
-      next  # Skip to the next iteration if one or more medians is NA
-    }
-    
-    # Print the results
-    cat("Comparison between", profession_group1, "and", profession_group2, ":\n")
-    cat("Median difference:", median_group1 - median_group2, "\n")
-    print(test_result)
-    cat("\n")
-  }
-}
-```
+GENERAL NOTES
+* Conduct Wilcoxon rank-sum test OR Dunns test to compare percent correct within groups (comparing total percent correct) because the Kruskal-Wallis test yeilded significant results across all groups. 
 
 
-### PATIENT POPULATION - WILCOXONRANKSUM ###
-```{r}
-# Create pairwise comparisons between levels of "age_ng"
-patpop_levels <- unique(SCDKAPa1$patient_pop_ng)
-
-# Perform pairwise Wilcoxon rank-sum test for each pair of age groups
-for (i in 1:(length(patpop_levels) - 1)) {
-  for (j in (i + 1):length(patpop_levels)) {
-    patpop_group1 <- patpop_levels[i]
-    patpop_group2 <- patpop_levels[j]
-    
-    # Subset data for the two groups
-    group1 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$patient_pop_ng == patpop_group1]
-    group2 <- SCDKAPa1$total_percentcorrect[SCDKAPa1$patient_pop_ng == patpop_group2]
-    
-    # Check if the groups are not empty
-    if (length(group1) == 0 | length(group2) == 0) {
-      cat("Warning: One or more groups is empty.\n")
-      next  # Skip to the next iteration if one or more groups is empty
-    }
-    
-    # Perform Wilcoxon rank-sum test
-    test_result <- wilcox.test(group1, group2)
-    
-    # Calculate medians
-    median_group1 <- median(group1, na.rm = TRUE)
-    median_group2 <- median(group2, na.rm = TRUE)
-    
-    # Check for NA values in medians
-    if (is.na(median_group1) | is.na(median_group2)) {
-      cat("Warning: One or more medians is NA.\n")
-      next  # Skip to the next iteration if one or more medians is NA
-    }
-    
-    # Print the results
-    cat("Comparison between", patpop_group1, "and", patpop_group2, ":\n")
-    cat("Median difference:", median_group1 - median_group2, "\n")
-    print(test_result)
-    cat("\n")
-  }
-}
-```
 
 
-## Determine Cronbach alphas for knowledge table ##
-```{r}
-# install.packages("psych")
-library(psych)
-```
 
-1. For Complications
-```{r}
-# Method #1
-alpha_complications <- SCDKAPa1 %>% 
-  select(patho_ng, complscdpeds_ng, acutechestpres_ng, investcause_ng, manifescdpeds_ng, hemorstroke_ng, ironover_ng, acutechronpain_ng)
 
-alpha(alpha_pos, na.rm = TRUE)
 
-# Method #2
-complication_ca <- c("patho_ng", "complscdpeds_ng", "acutechestpres_ng", 
-                         "investcause_ng", "manifescdpeds_ng", "hemorstroke_ng", 
-                         "ironover_ng", "acutechronpain_ng")
 
-assesscomplications <- SCDKAPa1[, complication_ca]
 
-alpha(assesscomplications)
-```
+
 
 
 
