@@ -32,6 +32,27 @@ alpha_pos <- SCDKAPa1 %>%
   select(gladmed_ng, friends_ng, satiscare_ng, empathy_ng)
 
 alpha(alpha_pos, na.rm = TRUE)
+
+# Confirming the function alpha() from the `psych` package
+compute_alpha <- function(..., na.rm) {
+  args <- list(...)
+  k <- length(args)
+  O <- Reduce("+", args)
+  if(any(is.na(O))) {
+  if (na.rm) {
+    inds_to_remove <- which(is.na(O))
+    args <- lapply(args, function(a) { return(a[-inds_to_remove]) })
+    O <- O[-inds_to_remove]
+  } else { return(NA) }
+  }
+  V_overall <- var(O)
+  v_components <- as.numeric(lapply(args, var))
+  alpha <- (k/(k-1)) * (1-(sum(v_components)/V_overall))
+  return(alpha)
+}
+compute_alpha(SCDKAPa1$gladmed_ng, SCDKAPa1$friends_ng,
+              SCDKAPa1$satiscare_ng, SCDKAPa1$empathy_ng, na.rm=T)
+
 ```
 
 * For negative attitude variables
@@ -41,6 +62,7 @@ alpha_neg <- SCDKAPa1 %>%
   select(overreport_ng, failtocom_ng, abusedrugs_ng, manipu_ng, drugseek_ng, frustrate_ng)
 
 alpha(alpha_neg, na.rm = TRUE)
+
 ```
 
 * For concerns raising behaviors variables
