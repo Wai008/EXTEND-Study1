@@ -14,6 +14,7 @@ library(readr)
 library(dplyr)
 library(broom)
 library(forcats)
+library(DescTools)
 ```
 
 1. Import and load data set
@@ -155,11 +156,18 @@ Total
 ```{r}
 # Median and IQR for total sample size
 total_median_correct <- median(SCDKAPa1$total_percentcorrect, na.rm = TRUE)
+total_median_ci_lo <- round(MedianCI(SCDKAPa1$total_percentcorrect, na.rm=T)[["lwr.ci"]], 1)
+total_median_ci_up <- round(MedianCI(SCDKAPa1$total_percentcorrect, na.rm=T)[["upr.ci"]], 1)
 total_q1 <- quantile(SCDKAPa1$total_percentcorrect, probs = 0.25, na.rm = TRUE)
 total_q3 <- quantile(SCDKAPa1$total_percentcorrect, probs = 0.75, na.rm = TRUE)
+total_mean_correct <- round(mean(SCDKAPa1$total_percentcorrect, na.rm = TRUE), 1)
+total_mean_correct_ci <- round(as.numeric(t.test(SCDKAPa1$total_percentcorrect)$conf.int), 1)
 
 # Print the median (and IQR) number correct
-print(paste("Total Median:", total_median_correct))
+print(paste0("Total Median: ", total_median_correct, " (95% CI: ",
+             total_median_ci_lo, ", ", total_median_ci_up, ")"))
+print(paste0("Total Mean: ", total_mean_correct, " (95% CI: ",
+             total_mean_correct_ci[1], ", ", total_mean_correct_ci[2], ")"))
 print(paste("Total 25% IQR:", total_q1))
 print(paste("Total 75% IQR:", total_q3))
 
@@ -228,8 +236,13 @@ totalmedian_iqr_by_group <- SCDKAPa1 %>%
   group_by(profession_ng_up) %>%
   summarize(
     median_correct = median(total_percentcorrect, na.rm = TRUE),
+    median_ci_lo = MedianCI(total_percentcorrect, na.rm=T)[["lwr.ci"]],
+    median_ci_up = MedianCI(total_percentcorrect, na.rm=T)[["upr.ci"]],
     q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE),
+    mean_correct = mean(total_percentcorrect, na.rm = TRUE),
+    mean_correct_ci_lo = as.numeric(t.test(total_percentcorrect)$conf.int)[1],
+    mean_correct_ci_up = as.numeric(t.test(total_percentcorrect)$conf.int)[2]
   )
 
 # Print the median (and IQR) number correct
