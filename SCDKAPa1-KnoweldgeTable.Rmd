@@ -214,24 +214,10 @@ print(paste("Total 25% IQR:", total_q1))
 print(paste("Total 75% IQR:", total_q3))
 ```
 
-### STUDY SAMPLE - 95% CI ###
-```{r}
-# Total % Correct
-result_wilcoxon <- SCDKAPa1 %>%
-  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
-  mutate(
-    method = "wilcoxon",
-    estimate_type = "Hodges–Lehmann"
-  )
-
-result_wilcoxon
-```
-
-
-### BY PROFESSION - MEDIAN AND IQR ###
+### BY PROFESSION - MEDIAN, IQR, and 95% CI ###
 Total Correct
 ```{r}
-# Median and IQR for each group
+# Median, IQR, 95% CIs for each group
 totalmedian_iqr_by_group <- SCDKAPa1 %>%
   group_by(profession_ng_up) %>%
   summarize(
@@ -321,26 +307,12 @@ print(paste("Total 25% IQR:", bpstotal_q1))
 print(paste("Total 75% IQR:", bpstotal_q3))
 ```
 
-### BY PROFESSION - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
-```{r}
-# Total % Correct
-result_wilcoxon <- SCDKAPa1 %>%
-  group_by(profession_ng_up) %>%
-  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
-  mutate(
-    method = "wilcoxon",
-    estimate_type = "Hodges–Lehmann"
-  )
-
-result_wilcoxon
-```
-
 ### BY PROFESSION - PAIRWISE COMPARISONS USING DUNNS ###
 ```{r}
 dunn.test(SCDKAPa1$total_percentcorrect, g = SCDKAPa1$profession_ng_up, method = "bonferroni")
 ```
 
-### BY AGE - MEDIAN AND IQR###
+### BY AGE - MEDIAN, IQR, 95% CIs###
 Total Correct
 ```{r}
 # Re-categorize age group
@@ -351,29 +323,25 @@ SCDKAPa1 <- SCDKAPa1 %>%
     TRUE ~  age_ng # Keep other values unchanged
   ))
 
-# Median and IQR for each age group - total
+
+# Median,IQR, 95% CIs for each age group - total
 totalmedian_iqr_by_age <- SCDKAPa1 %>%
   group_by(age_ng) %>%
   summarize(
     median_correct = median(total_percentcorrect, na.rm = TRUE),
+    median_ci_lo = MedianCI(total_percentcorrect, na.rm=T)[["lwr.ci"]],
+    median_ci_up = MedianCI(total_percentcorrect, na.rm=T)[["upr.ci"]],
     q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE),
+    mean_correct = mean(total_percentcorrect, na.rm = TRUE),
+    mean_correct_ci_lo = as.numeric(t.test(total_percentcorrect)$conf.int)[1],
+    mean_correct_ci_up = as.numeric(t.test(total_percentcorrect)$conf.int)[2]
   )
 
 totalmedian_iqr_by_age
 
 # PValues - Perform the Kruskal-Wallis test
 kruskal.test(total_percentcorrect ~ age_ng, data = SCDKAPa1)
-
-# Confidence Intervals of Total % correct for each age category
-ci_by_agegroup <- SCDKAPa1 %>%
-  group_by(age_ng) %>%
-  summarize(
-    ci_lower = t.test(total_percentcorrect)$conf.int[1],
-    ci_upper = t.test(total_percentcorrect)$conf.int[2]
-  )
-
-ci_by_agegroup
 ```
 
 Complications
@@ -416,20 +384,6 @@ bpsmedian_iqr_by_age <- SCDKAPa1 %>%
   )
 
 bpsmedian_iqr_by_age
-```
-
-### BY AGE - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
-```{r}
-# Total % Correct
-result_wilcoxon <- SCDKAPa1 %>%
-  group_by(age_ng) %>%
-  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
-  mutate(
-    method = "wilcoxon",
-    estimate_type = "Hodges–Lehmann"
-  )
-
-result_wilcoxon
 ```
 
 ### BY AGE - PAIRWISE COMPARISONS USING WILCOXONRANKSUM ###
@@ -475,32 +429,27 @@ for (i in 1:(length(age_levels) - 1)) {
 }
 ```
 
-### BY PATIENT POPULATION - MEDIAN AND IQR###
+### BY PATIENT POPULATION - MEDIAN, IQR, 95% CIs###
 Total Correct
 ```{r}
-# Median and IQR for each age group - total
+# Median, IQR, 95% CIs for each age group - total
 totalmedian_iqr_by_patpop <- SCDKAPa1 %>%
   group_by(patient_pop_ng) %>%
   summarize(
     median_correct = median(total_percentcorrect, na.rm = TRUE),
+    median_ci_lo = MedianCI(total_percentcorrect, na.rm=T)[["lwr.ci"]],
+    median_ci_up = MedianCI(total_percentcorrect, na.rm=T)[["upr.ci"]],
     q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE),
+    mean_correct = mean(total_percentcorrect, na.rm = TRUE),
+    mean_correct_ci_lo = as.numeric(t.test(total_percentcorrect)$conf.int)[1],
+    mean_correct_ci_up = as.numeric(t.test(total_percentcorrect)$conf.int)[2]
   )
 
 totalmedian_iqr_by_patpop
 
 # PValues - Perform the Kruskal-Wallis test
 kruskal.test(total_percentcorrect ~ patient_pop_ng, data = SCDKAPa1)
-
-# Confidence Intervals of Total % correct for each patient population
-ci_by_patpop <- SCDKAPa1 %>%
-  group_by(patient_pop_ng) %>%
-  summarize(
-    ci_lower = t.test(total_percentcorrect)$conf.int[1],
-    ci_upper = t.test(total_percentcorrect)$conf.int[2]
-  )
-
-ci_by_patpop
 ```
 
 Complications
@@ -545,27 +494,13 @@ bpsmedian_iqr_by_patpop <- SCDKAPa1 %>%
 bpsmedian_iqr_by_patpop
 ```
 
-### BY PATIENT POPULATION - 95% CIs USING WILCOXON SIGNED-RANK SUM ###
-```{r}
-# Total % Correct
-result_wilcoxon <- SCDKAPa1 %>%
-  group_by(patient_pop_ng) %>%
-  do(tidy(wilcox.test(total_percentcorrect ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
-  mutate(
-    method = "wilcoxon",
-    estimate_type = "Hodges–Lehmann"
-  )
-
-result_wilcoxon
-```
-
 ### BY PATIENT POPULATION - PAIRWISE COMPARISONS USING DUNNS TEST ###
 ```{r}
 dunn.test(SCDKAPa1$total_percentcorrect, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
 ```
 
 
-### BY NUMBER OF PATIENTS SEEN / WEEK - MEDIAN AND IQR###
+### BY NUMBER OF PATIENTS SEEN / WEEK - MEDIAN, IQR, 95% CIs###
 Create new variable to recode number of patients seen into binary variable
 ```{r}
 SCDKAPa1 <- SCDKAPa1 %>%
@@ -586,8 +521,13 @@ totalmedian_iqr_by_numscdpt <- SCDKAPa1 %>%
   group_by(numscdpt_ng_up) %>%
   summarize(
     median_correct = median(total_percentcorrect, na.rm = TRUE),
+    median_ci_lo = MedianCI(total_percentcorrect, na.rm=T)[["lwr.ci"]],
+    median_ci_up = MedianCI(total_percentcorrect, na.rm=T)[["upr.ci"]],
     q1 = quantile(total_percentcorrect, probs = 0.25, na.rm = TRUE),
-    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE)
+    q3 = quantile(total_percentcorrect, probs = 0.75, na.rm = TRUE),
+    mean_correct = mean(total_percentcorrect, na.rm = TRUE),
+    mean_correct_ci_lo = as.numeric(t.test(total_percentcorrect)$conf.int)[1],
+    mean_correct_ci_up = as.numeric(t.test(total_percentcorrect)$conf.int)[2]
   )
 
 totalmedian_iqr_by_numscdpt
