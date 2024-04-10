@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(psych)
 ```
+
 # Importing datasets
 
 ```{r}
@@ -22,16 +23,14 @@ sum_all_var <- read_csv("data/sum_all_var_l.csv")
 original <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
 ```
 
-
-# Joining datasets 
+# Joining datasets
 
 ```{r}
 SCDKAPa1 <- original %>% 
   left_join(sum_all_var, by = "record_id")
 ```
 
-Now we got the final dataset that can be used for the data analysis of SCDKAP Aim1 Table 3 (attitudes). Attitude scales have been changed on a scale of 0 to 100. 
-
+Now we got the final dataset that can be used for the data analysis of SCDKAP Aim1 Table 3 (attitudes). Attitude scales have been changed on a scale of 0 to 100.
 
 # Checking normality of data distribution before conducting analysis for table 3: attitude scores
 
@@ -92,10 +91,9 @@ skew(SCDKAPa1$sum_redflag_l, na.rm = TRUE)
 
 ```
 
-Based on the results of histogram, shapiro test, kurtosis and skewness tests, it is confirmed that data are __not__ normally distributed.
+Based on the results of histogram, shapiro test, kurtosis and skewness tests, it is confirmed that data are **not** normally distributed.
 
 Therefore, we will report median/IQR and do the Kruskal Wallis Test.
-
 
 # Calculating for table (3): mean/sd/median/IQR/range for total scores and stratified by specific attitude
 
@@ -175,8 +173,7 @@ age_red <- SCDKAPa1 %>% # Redflag attitude
 age_red
 ```
 
-
-## Calculating median/IQR for attitude variables grouping by profession. __Please be careful__ when checking the prof data. 1 (Physician), 2 (Nurse), 3 (Other).
+## Calculating median/IQR for attitude variables grouping by profession. **Please be careful** when checking the prof data. 1 (Physician), 2 (Nurse), 3 (Other).
 
 ```{r}
 
@@ -217,7 +214,7 @@ prof_red <- SCDKAPa1 %>% # Redflag attitude
 prof_red
 ```
 
-## Calculating median/IQR for attitude variables grouping by Patient population. __1 (adult), 2 (paed), 3 (both)__
+## Calculating median/IQR for attitude variables grouping by Patient population. **1 (adult), 2 (paed), 3 (both)**
 
 ```{r}
 
@@ -257,54 +254,52 @@ pop_red <- SCDKAPa1 %>% # Redflag attitude
 pop_red
 ```
 
-
-## Calculating median/IQR for attitude variables grouping by number of patients seen 
+## Calculating median/IQR for attitude variables grouping by number of patients seen
 
 (1) 0-5, (2) 6-10, (3) 10-15, (4) 16-20, (5) 20 or more
 
+* group 2 to 5 will be collapsed as a group and will be compared with group 1.
 
 ```{r}
-ptseen_number <- SCDKAPa1 %>% 
-  group_by(numscdpt_ng) %>% 
-  count()
+ptseen_number <- SCDKAPa1 %>% # Creating new variable to collapse group 2 to 5
+  mutate(num_pt = ifelse(numscdpt_ng == 1, 1, 2))
 ptseen_number
 
-ptseen_pos <- SCDKAPa1 %>% # Positive attitude
-  group_by(numscdpt_ng) %>% 
+ptseen_pos <- ptseen_number %>% # Positive attitude
+  group_by(num_pt) %>% 
   summarise(median(sum_positive_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_positive_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_positive_l, 0.75, na.rm = TRUE))
 ptseen_pos
 
 
-ptseen_neg <- SCDKAPa1 %>% # Negative attitude
-  group_by(numscdpt_ng) %>% 
+ptseen_neg <- ptseen_number %>% # Negative attitude
+  group_by(num_pt) %>% 
   summarise(median(sum_negative_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_negative_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_negative_l, 0.75, na.rm = TRUE))
 ptseen_neg
 
 
-ptseen_con <- SCDKAPa1 %>% # Concerns attitude
-  group_by(numscdpt_ng) %>% 
+ptseen_con <- ptseen_number %>% # Concerns attitude
+  group_by(num_pt) %>% 
   summarise(median(sum_concerns_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_concerns_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_concerns_l, 0.75, na.rm = TRUE))
 ptseen_con
 
-ptseen_red <- SCDKAPa1 %>% # Redflag attitude
-  group_by(numscdpt_ng) %>% 
+ptseen_red <- ptseen_number %>% # Redflag attitude
+  group_by(num_pt) %>% 
   summarise(median(sum_redflag_l, na.rm = TRUE),
             quantile_25_neg = quantile(sum_redflag_l, 0.25, na.rm = TRUE),
             quantile_75_neg = quantile(sum_redflag_l, 0.75, na.rm = TRUE))
 ptseen_red
 ```
 
+# Kruskal Wallis test by using total sum of all variables attirbuting to one specific attitude if we decide data is **not** normally distributed.
 
-# Kruskal Wallis test by using total sum of all variables attirbuting to one specific attitude if we decide data is __not__ normally distributed.
+## Comparison of attitudes stratified by age groups (18-35 \| 35 - 65 \| 65 years and olders)
 
-## Comparison of attitudes stratified by age groups (18-35 | 35 - 65 | 65 years and olders)
- 
 ```{r}
 kruskal.test(sum_positive_l ~ age_ng, data = SCDKAPa1)
 
@@ -314,14 +309,13 @@ kruskal.test(sum_concerns_l ~ age_ng, data = SCDKAPa1)
 
 kruskal.test(sum_redflag_l ~ age_ng, data = SCDKAPa1)
 ```
- 
+
 ```{r}
 library(dunn.test)
 ```
- 
- 
-## Comparison of attitudes stratified by profession (Nurse | Physician | Other)
- 
+
+## Comparison of attitudes stratified by profession (Nurse \| Physician \| Other)
+
 ```{r}
 
 kruskal.test(sum_positive_l ~ profession_ng_up, data = SCDKAPa1)
@@ -333,10 +327,17 @@ kruskal.test(sum_concerns_l ~ profession_ng_up, data = SCDKAPa1)
 kruskal.test(sum_redflag_l ~ profession_ng_up, data = SCDKAPa1)
 
 ```
- 
- 
-## Comparison of attitudes stratified by patient population (Adults | Paeds | Both)
- 
+
+## Comparison of attitudes stratified by patient population (Adults \| Paeds \| Both)
+
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(patient_pop_ng) %>% 
+  count()
+```
+
+
 ```{r}
 kruskal.test(sum_positive_l ~ patient_pop_ng, data = SCDKAPa1)
 
@@ -346,7 +347,7 @@ kruskal.test(sum_concerns_l ~ patient_pop_ng, data = SCDKAPa1)
 
 kruskal.test(sum_redflag_l ~ patient_pop_ng, data = SCDKAPa1)
 ```
- 
+### Post hoc test
 ```{r}
 dunn.test(SCDKAPa1$sum_positive_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
 
@@ -357,18 +358,244 @@ dunn.test(SCDKAPa1$sum_concerns_l, g = SCDKAPa1$patient_pop_ng, method = "bonfer
 dunn.test(SCDKAPa1$sum_redflag_l, g = SCDKAPa1$patient_pop_ng, method = "bonferroni")
 ```
 
-## Comparison of attitudes stratified by number of patients seen (0-5 | 6-10 | 10-15 | 16-20 | 20 or more)
- 
+## Comparison of attitudes stratified by number of patients seen (0-5 \| 6-10 \| 10-15 \| 16-20 \| 20 or more)
+
 ```{r}
-kruskal.test(sum_positive_l ~ numscdpt_ng, data = SCDKAPa1)
+kruskal.test(sum_positive_l ~ num_pt, data = ptseen_number)
 
-kruskal.test(sum_negative_l ~ numscdpt_ng, data = SCDKAPa1)
+kruskal.test(sum_negative_l ~ num_pt, data = ptseen_number)
 
-kruskal.test(sum_concerns_l ~ numscdpt_ng, data = SCDKAPa1)
+kruskal.test(sum_concerns_l ~ num_pt, data = ptseen_number)
 
-kruskal.test(sum_redflag_l ~ numscdpt_ng, data = SCDKAPa1)
+kruskal.test(sum_redflag_l ~ num_pt, data = ptseen_number)
 ```
- 
+
+# Calculation of Confidence Intervals
+
+```{r}
+library(broom)
+```
+
+## Total sum
+
+```{r}
+
+sum_pos_ci <- SCDKAPa1 %>%
+  do(tidy(wilcox.test(sum_positive_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+sum_pos_ci
+```
+
+```{r}
+sum_neg_ci <- SCDKAPa1 %>%
+  do(tidy(wilcox.test(sum_negative_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+sum_neg_ci
+```
+
+```{r}
+sum_con_ci <- SCDKAPa1 %>%
+  do(tidy(wilcox.test(sum_concerns_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+sum_con_ci
+```
+
+
+```{r}
+sum_red_ci <- SCDKAPa1 %>%
+  do(tidy(wilcox.test(sum_redflag_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+
+sum_red_ci
+```
+
+## Age CI
+
+```{r}
+age_pos_ci <- SCDKAPa1 %>%
+  group_by(age_ng) %>% 
+  do(tidy(wilcox.test(sum_positive_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+age_pos_ci
+
+age_neg_ci <- SCDKAPa1 %>%
+  group_by(age_ng) %>% 
+  do(tidy(wilcox.test(sum_negative_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+age_neg_ci
+
+
+age_con_ci <- SCDKAPa1 %>%
+  group_by(age_ng) %>% 
+  do(tidy(wilcox.test(sum_concerns_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+age_con_ci
+
+
+age_red_ci <- SCDKAPa1 %>%
+  group_by(age_ng) %>% 
+  do(tidy(wilcox.test(sum_redflag_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+age_red_ci
+
+```
+
+## Professional CI
+
+```{r}
+
+prof_pos_ci <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>% 
+  do(tidy(wilcox.test(sum_positive_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+prof_pos_ci
+
+prof_neg_ci <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>% 
+  do(tidy(wilcox.test(sum_negative_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+prof_neg_ci
+
+
+prof_con_ci <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>% 
+  do(tidy(wilcox.test(sum_concerns_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+prof_con_ci
+
+
+prof_red_ci <- SCDKAPa1 %>%
+  group_by(profession_ng_up) %>% 
+  do(tidy(wilcox.test(sum_redflag_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+prof_red_ci
+```
+
+## Patient population CI
+
+```{r}
+pt_pos_ci <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>% 
+  do(tidy(wilcox.test(sum_positive_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+pt_pos_ci
+
+pt_neg_ci <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>% 
+  do(tidy(wilcox.test(sum_negative_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+pt_neg_ci
+
+
+pt_con_ci <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>% 
+  do(tidy(wilcox.test(sum_concerns_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+pt_con_ci
+
+
+pt_red_ci <- SCDKAPa1 %>%
+  group_by(patient_pop_ng) %>% 
+  do(tidy(wilcox.test(sum_redflag_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+pt_red_ci
+
+
+```
+
+## Patient seen CI
+
+```{r}
+ps_pos_ci <- ptseen_number %>%
+  group_by(num_pt) %>% 
+  do(tidy(wilcox.test(sum_positive_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+ps_pos_ci
+
+ps_neg_ci <- ptseen_number %>%
+  group_by(num_pt) %>% 
+  do(tidy(wilcox.test(sum_negative_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+ps_neg_ci
+
+
+ps_con_ci <- ptseen_number %>%
+  group_by(num_pt) %>% 
+  do(tidy(wilcox.test(sum_concerns_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+ps_con_ci
+
+
+ps_red_ci <- ptseen_number %>%
+  group_by(num_pt) %>% 
+  do(tidy(wilcox.test(sum_redflag_l ~ 1, data = ., conf.int = TRUE, exact = FALSE, correct = FALSE))) %>%
+  mutate(
+    method = "wilcoxon",
+    estimate_type = "Hodges–Lehmann"
+  )
+ps_red_ci
+```
+
 
 
 
