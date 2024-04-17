@@ -92,7 +92,7 @@ sum_all_var_l <- data.frame(
 # Exporting dataset that has been linearly transformed into a scale of 0 to 100.
 
 ```{r}
-write_csv(sum_all_var_l, "sum_all_var_l.csv")
+#write_csv(sum_all_var_l, "sum_all_var_l.csv")
 ```
 
 
