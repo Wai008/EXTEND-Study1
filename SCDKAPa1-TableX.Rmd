@@ -1,0 +1,292 @@
+---
+title: "table X correct answer knowledge question"
+author: "Wai"
+date: "2024-06-18"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+SCDKAPa1 <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
+```
+
+# Which of the following pathophysiologic mechanisms are associated with SCD? Ans: e
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(patho_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+# Which of the following complications is not common among children with SCD? Ans: e
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(complscdpeds_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Acute chest syndrome may be associated with which of the following presentations? Ans: d
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(acutechestpres_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Which of the following pain symptoms should warrant further investigation for the cause? Ans: d
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(investcause_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+# Which of the following painful conditions is frequently the initial manifestation of SCD in children? Ans: a 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(manifescdpeds_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+# Which of the following approaches to analgesic management is considered the gold standard? Ans: a
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(goldstand_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+# Potential reasons for repeat ED visits include all of the following except? Ans: d
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(edvisit_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# List the most common contraindication to NSAIDs for patients with SCD? Ans: d
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(contransaids_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+# Methadone may be indicated for which of the following patients? Ans: 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(indicmetha_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+# Using opioids to treat insomnia, anxiety, or for some other purpose than treating pain defines which of the following? Ans: b
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(insomantx_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+# Which of the following social issues may influence patients with SCD? Ans: d
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(socialinfluence_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Which of the following psychological issues are not common among patients with SCD? Ans: a 
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(psychosocial_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Acute hemorrhagic stroke is more common in children than adults? Ans: b (false)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(hemorstroke_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Iron overload is common in all adults with SCD? Ans: b (false)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(ironover_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Patients with a hemoglobin of < 5 g/dL should always be transfused? Ans: b (false)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(hemo_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Many patients with SCD experience both acute and chronic pain? Ans: a (true)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(acutechronpain_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Long- and short-acting opioids have a role in the management of SCD for patients with chronic pain? Ans: a (true)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(longshortpain_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+# Addiction is a state of adaptation in which exposure to a drug induces changes that result in a diminution of one or more of the drug's effects over time? Ans: b (false)
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(addictionadapt_ng, profession_ng_up) %>% 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+
+
+
