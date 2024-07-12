@@ -1,0 +1,871 @@
+---
+title: "SCDKAPa1-Table4(Revised)"
+author: "Wai"
+date: "2024-07-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading required packages
+
+```{r}
+library(tidyverse)
+```
+
+# Importing dataset
+
+```{r}
+SCDKAPa1 <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
+```
+
+# Calculating use/do-not-use/NA table
+
+## Create new variable that combines the values of complete adh plus frequntly adh and the values of rarely plus never.
+
+original scale: 1 (never), 2 (rarely), 3 (frequently), 4 (always), 5 (NA)
+
+re-scale: 1 (never & rarely), 2 (frequently & always), 3 (NA)
+
+
+```{r binary}
+binary_adh <- SCDKAPa1 %>% 
+  mutate(freqabx_ng = case_when(freqabx_ng %in% c(1,2) ~ 1,
+                                freqabx_ng %in% c(3,4) ~ 2,
+                                freqabx_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         freqstopabx_ng = case_when(freqstopabx_ng %in% c(1,2) ~ 1,
+                                freqstopabx_ng %in% c(3,4) ~ 2,
+                                freqstopabx_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         freqedpneuvax_ng = case_when(freqedpneuvax_ng %in% c(1,2) ~ 1,
+                                freqedpneuvax_ng %in% c(3,4) ~ 2,
+                                freqedpneuvax_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         freqedfever_ng = case_when(freqedfever_ng %in% c(1,2) ~ 1,
+                                freqedfever_ng %in% c(3,4) ~ 2,
+                                freqedfever_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         freqcbcretic_ng = case_when(freqcbcretic_ng %in% c(1,2) ~ 1,
+                                freqcbcretic_ng %in% c(3,4) ~ 2,
+                                freqcbcretic_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         freqipp_ng = case_when(freqipp_ng %in% c(1,2) ~ 1,
+                                freqipp_ng %in% c(3,4) ~ 2,
+                                freqipp_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         consultscd_ng = case_when(consultscd_ng %in% c(1,2) ~ 1,
+                                consultscd_ng %in% c(3,4) ~ 2,
+                                consultscd_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         counselmiss_ng = case_when(counselmiss_ng %in% c(1,2) ~ 1,
+                                counselmiss_ng %in% c(3,4) ~ 2,
+                                counselmiss_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         educatescd_ng = case_when(educatescd_ng %in% c(1,2) ~ 1,
+                                educatescd_ng %in% c(3,4) ~ 2,
+                                educatescd_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         hutherapyadult_ng = case_when(hutherapyadult_ng %in% c(1,2) ~ 1,
+                                hutherapyadult_ng %in% c(3,4) ~ 2,
+                                hutherapyadult_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         hutherapypeds_ng = case_when(hutherapypeds_ng %in% c(1,2) ~ 1,
+                                hutherapypeds_ng %in% c(3,4) ~ 2,
+                                hutherapypeds_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         disconpreg_ng = case_when(disconpreg_ng %in% c(1,2) ~ 1,
+                                disconpreg_ng %in% c(3,4) ~ 2,
+                                disconpreg_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         cbcwithdiff_ng = case_when(cbcwithdiff_ng %in% c(1,2) ~ 1,
+                                cbcwithdiff_ng %in% c(3,4) ~ 2,
+                                cbcwithdiff_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         monitorcbc_ng = case_when(monitorcbc_ng %in% c(1,2) ~ 1,
+                                monitorcbc_ng %in% c(3,4) ~ 2,
+                                monitorcbc_ng == 5 ~ 3,
+                                TRUE ~ NA),
+         transfus10_ng = case_when(transfus10_ng %in% c(1,2) ~ 1,
+                             transfus10_ng %in% c(3,4) ~ 2,
+                             transfus10_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         reduchbs_ng = case_when(reduchbs_ng %in% c(1,2) ~ 1,
+                             reduchbs_ng %in% c(3,4) ~ 2,
+                             reduchbs_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         simpletransfus_ng = case_when(simpletransfus_ng %in% c(1,2) ~ 1,
+                             simpletransfus_ng %in% c(3,4) ~ 2,
+                             simpletransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         theratransfus_ng = case_when(theratransfus_ng %in% c(1,2) ~ 1,
+                             theratransfus_ng %in% c(3,4) ~ 2,
+                             theratransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         delaytransfus_ng = case_when(delaytransfus_ng %in% c(1,2) ~ 1,
+                             delaytransfus_ng %in% c(3,4) ~ 2,
+                             delaytransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         ipptransfus_ng = case_when(ipptransfus_ng %in% c(1,2) ~ 1,
+                             ipptransfus_ng %in% c(3,4) ~ 2,
+                             ipptransfus_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         rbcantigen_ng = case_when(rbcantigen_ng %in% c(1,2) ~ 1,
+                             rbcantigen_ng %in% c(3,4) ~ 2,
+                             rbcantigen_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         leukreduc_ng = case_when(leukreduc_ng %in% c(1,2) ~ 1,
+                             leukreduc_ng %in% c(3,4) ~ 2,
+                             leukreduc_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         chelatthera_ng = case_when(chelatthera_ng %in% c(1,2) ~ 1,
+                             chelatthera_ng %in% c(3,4) ~ 2,
+                             chelatthera_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         proteinuria_ng = case_when(proteinuria_ng %in% c(1,2) ~ 1,
+                             proteinuria_ng %in% c(3,4) ~ 2,
+                             proteinuria_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         htn_ng = case_when(htn_ng %in% c(1,2) ~ 1,
+                             htn_ng %in% c(3,4) ~ 2,
+                             htn_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         bpchild_ng = case_when(bpchild_ng %in% c(1,2) ~ 1,
+                             bpchild_ng %in% c(3,4) ~ 2,
+                             bpchild_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         extremities_ng = case_when(extremities_ng %in% c(1,2) ~ 1,
+                             extremities_ng %in% c(3,4) ~ 2,
+                             extremities_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         transcdop_ng = case_when(transcdop_ng %in% c(1,2) ~ 1,
+                             transcdop_ng %in% c(3,4) ~ 2,
+                             transcdop_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         assessresp_ng = case_when(assessresp_ng %in% c(1,2) ~ 1,
+                             assessresp_ng %in% c(3,4) ~ 2,
+                             assessresp_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         reproriskasses_ng = case_when(reproriskasses_ng %in% c(1,2) ~ 1,
+                             reproriskasses_ng %in% c(3,4) ~ 2,
+                             reproriskasses_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         adultscdscreen_ng = case_when(adultscdscreen_ng %in% c(1,2) ~ 1,
+                             adultscdscreen_ng %in% c(3,4) ~ 2,
+                             adultscdscreen_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         assessavn_ng = case_when(assessavn_ng %in% c(1,2) ~ 1,
+                             assessavn_ng %in% c(3,4) ~ 2,
+                             assessavn_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         pregtransfuse_ng = case_when(pregtransfuse_ng %in% c(1,2) ~ 1,
+                             pregtransfuse_ng %in% c(3,4) ~ 2,
+                             pregtransfuse_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         assesssleepbreath_ng = case_when(assesssleepbreath_ng %in% c(1,2) ~ 1,
+                             assesssleepbreath_ng %in% c(3,4) ~ 2,
+                             assesssleepbreath_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ),
+         specialist_ng = case_when(specialist_ng %in% c(1,2) ~ 1,
+                             specialist_ng %in% c(3,4) ~ 2,
+                             specialist_ng == 5 ~ 3,
+                             TRUE ~ NA
+                             ))
+```
+
+
+## Now calculate use/do-not-use/NA data, and remove missing number from denominator
+
+### Table 4a Healthcare Provider Use of Health Maintenance Guidelines 
+
+- freqabx_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(freqabx_ng)) %>% 
+  group_by(freqabx_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- freqstopabx_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(freqstopabx_ng)) %>% 
+  group_by(freqstopabx_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- freqedpneuvax_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(freqedpneuvax_ng)) %>% 
+  group_by(freqedpneuvax_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- freqedfever_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(freqedfever_ng)) %>% 
+  group_by(freqedfever_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- freqcbcretic_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(freqcbcretic_ng)) %>% 
+  group_by(freqcbcretic_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- freqipp_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(freqipp_ng)) %>% 
+  group_by(freqipp_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+### Table 4b.2 Healthcare Provider Hydroxyurea Use Guidelines 
+
+- consultscd_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(consultscd_ng)) %>% 
+  group_by(consultscd_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+- counselmiss_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(counselmiss_ng)) %>% 
+  group_by(counselmiss_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+- educatescd_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(educatescd_ng)) %>% 
+  group_by(educatescd_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- hutherapyadult_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(hutherapyadult_ng)) %>% 
+  group_by(hutherapyadult_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- hutherapypeds_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(hutherapypeds_ng)) %>% 
+  group_by(hutherapypeds_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- disconpreg_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(disconpreg_ng)) %>% 
+  group_by(disconpreg_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- cbcwithdiff_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(cbcwithdiff_ng)) %>% 
+  group_by(cbcwithdiff_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- monitorcbc_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(monitorcbc_ng)) %>% 
+  group_by(monitorcbc_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+### Table 4c.2 Healthcare Provider Blood Transfusion Guideline Use
+
+- transfus10_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(transfus10_ng)) %>% 
+  group_by(transfus10_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- reduchbs_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(reduchbs_ng)) %>% 
+  group_by(reduchbs_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- simpletransfus_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(simpletransfus_ng)) %>% 
+  group_by(simpletransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- theratransfus_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(theratransfus_ng)) %>% 
+  group_by(theratransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- delaytransfus_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(delaytransfus_ng)) %>% 
+  group_by(delaytransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- ipptransfus_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(ipptransfus_ng)) %>% 
+  group_by(ipptransfus_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- rbcantigen_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(rbcantigen_ng)) %>% 
+  group_by(rbcantigen_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- leukreduc_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(leukreduc_ng)) %>% 
+  group_by(leukreduc_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- chelatthera_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(chelatthera_ng)) %>% 
+  group_by(chelatthera_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+### Table 4d. Healthcare Provider Screening Guideline Use
+
+- proteinuria_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(proteinuria_ng)) %>% 
+  group_by(proteinuria_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- htn_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(htn_ng)) %>% 
+  group_by(htn_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- bpchild_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(bpchild_ng)) %>% 
+  group_by(bpchild_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- extremities_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(extremities_ng)) %>% 
+  group_by(extremities_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- transcdop_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(transcdop_ng)) %>% 
+  group_by(transcdop_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- assessresp_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(assessresp_ng)) %>% 
+  group_by(assessresp_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- reproriskasses_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(reproriskasses_ng)) %>% 
+  group_by(reproriskasses_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- adultscdscreen_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(adultscdscreen_ng)) %>% 
+  group_by(adultscdscreen_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- assessavn_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(assessavn_ng)) %>% 
+  group_by(assessavn_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- pregtransfuse_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(pregtransfuse_ng)) %>% 
+  group_by(pregtransfuse_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- assesssleepbreath_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(assesssleepbreath_ng)) %>% 
+  group_by(assesssleepbreath_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+- specialist_ng
+
+```{r}
+binary_adh %>% 
+  filter(!is.na(specialist_ng)) %>% 
+  group_by(specialist_ng) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  mutate(
+    total = sum(n),
+    percentage = round(n/sum(n)*100,1)
+  )
+```
+
+
+## Calculating yes/no data stratified by profession and type of patients
+
+scale: 1 (yes), 0 (no)
+
+profession type     : 1 (physician), 2 (nurse), 3 (other)
+patient pop type    : 1 (adults), 2 (peds), 3 (both)
+
+### Table 4b.1 Healthcare Provider Prescription of Hydroxyurea and Hematology Expertise
+
+- hurx_up - Do you prescribe hydroxyurea to individuals with SCD who are eligible for hydroxyurea therapy?
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(hurx_up, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(hurx_up, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+```
+
+
+- hucollab_ng - Do you work with a hematologist/SCD expert who prescribes hydroxyurea to individuals with SCD who are eligible for hydroxyurea therapy?
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(hucollab_ng, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(hucollab_ng, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+```
+
+### Table 4c.1 Healthcare Provider Guideline Based Blood Transfusion Practices
+
+- ordertransfus_ng - Do you utilize/order blood transfusion (simple and/or exchange) for individuals with SCD?
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(ordertransfus_ng, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(ordertransfus_ng, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+```
+
+- collabtransfus_ng - Do you work with a hematologist/SCD expert who utilizes/orders blood transfusions for individuals with SCD?	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(collabtransfus_ng, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(collabtransfus_ng, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+```
+
+- xchangetransfus - Do you have access to the equipment and personnel necessary to provide exchange transfusions?	
+
+```{r}
+SCDKAPa1 %>% 
+  group_by(xchangetransfus, profession_ng_up) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(profession_ng_up) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+
+
+SCDKAPa1 %>% 
+  group_by(xchangetransfus, patient_pop_ng) %>% 
+   summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>% 
+  group_by(patient_pop_ng) %>% 
+  mutate(percentage = round(n/sum(n)*100,1))
+```
+
+
+
+
+
+
+
