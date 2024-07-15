@@ -200,6 +200,7 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
+  filter(!is.na(hemorstroke_ng)) %>% 
   group_by(hemorstroke_ng, profession_ng_up) %>% 
   summarise(
     n = n(),
@@ -215,6 +216,7 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
+  filter(!is.na(ironover_ng)) %>% 
   group_by(ironover_ng, profession_ng_up) %>% 
   summarise(
     n = n(),
@@ -230,6 +232,7 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
+  filter(!is.na(hemo_ng)) %>% 
   group_by(hemo_ng, profession_ng_up) %>% 
   summarise(
     n = n(),
@@ -245,6 +248,7 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
+  filter(!is.na(acutechronpain_ng)) %>% 
   group_by(acutechronpain_ng, profession_ng_up) %>% 
   summarise(
     n = n(),
@@ -260,6 +264,7 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
+  filter(!is.na(longshortpain_ng)) %>% 
   group_by(longshortpain_ng, profession_ng_up) %>% 
   summarise(
     n = n(),
@@ -275,6 +280,7 @@ SCDKAPa1 %>%
 
 ```{r}
 SCDKAPa1 %>% 
+  filter(!is.na(addictionadapt_ng)) %>% 
   group_by(addictionadapt_ng, profession_ng_up) %>% 
   summarise(
     n = n(),
