@@ -15,14 +15,16 @@ library(dplyr)
 library(broom)
 library(forcats)
 library(DescTools)
+library(dunn.test)
 ```
 
 1. Import and load data set
 ```{r}
-SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/Duke Grad/IBEMERE/SCD KAP Aim 1/data/Feb_20_2024_SCDKAPAim1.csv")
+SCDKAPa1 <- read_csv("data/Feb_20_2024_SCDKAPAim1.csv")
 # SCDKAPa1 <- read_csv("/Users/kirstinwest/Desktop/SCDKAPAim1.csv") # older dataset version
 # View(SCDKAPa1)
 ```
+
 
 2. Create variable(s) for number of questions correct
 Create variable for the total number of questions correct (out of 18). For each answer the participant answers correctly, the value of one is added to the "totalcorrect" variable.
@@ -32,7 +34,7 @@ SCDKAPa1$totalcorrect <- 0
 
 # Increment "totalcorrect" based on conditions
 SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$patho_ng == "c", 1, 0)
-SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$complscdpeds_ng == "a", 1, 0)
+SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$complscdpeds_ng == "e", 1, 0)
 SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$acutechestpres_ng == "d", 1, 0)
 SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$investcause_ng == "d", 1, 0)
 SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$manifescdpeds_ng == "a", 1, 0)
@@ -53,7 +55,7 @@ SCDKAPa1$totalcorrect <- SCDKAPa1$totalcorrect + ifelse(SCDKAPa1$addictionadapt_
 # Convert the total number correct for all participants to the total percent correct
 SCDKAPa1$total_percentcorrect <- (SCDKAPa1$totalcorrect / 18) * 100
 
-# View(SCDKAPa1)
+#View(SCDKAPa1)
 ```
 
 Create variable for the complication questions correct (out of 8). For each answer the participant answers correctly, the value of one is added to the "compcorrect" variable.
@@ -63,7 +65,7 @@ SCDKAPa1$compcorrect <- 0
 
 # Increment "compcorrect" based on conditions
 SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$patho_ng == "c", 1, 0)
-SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$complscdpeds_ng == "a", 1, 0)
+SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$complscdpeds_ng == "e", 1, 0)
 SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$acutechestpres_ng == "d", 1, 0)
 SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$investcause_ng == "d", 1, 0)
 SCDKAPa1$compcorrect <- SCDKAPa1$compcorrect + ifelse(SCDKAPa1$manifescdpeds_ng == "a", 1, 0)
